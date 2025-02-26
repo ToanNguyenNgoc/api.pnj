@@ -1,48 +1,20 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
-import { CreatePermissionDto } from './dto/create-permission.dto';
-import { UpdatePermissionDto } from './dto/update-permission.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { SWAGGER_TAG } from 'src/constants';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { NAME, SWAGGER_TAG } from 'src/constants';
+import { OAuthGuard, RoleGuard } from 'src/middlewares';
+import { Roles } from 'src/decorators';
 
 @ApiTags(SWAGGER_TAG.RolePermission)
 @Controller('permissions')
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
-  @Post()
-  create(@Body() createPermissionDto: CreatePermissionDto) {
-    return this.permissionsService.create(createPermissionDto);
-  }
-
   @Get()
+  @ApiBearerAuth(NAME.JWT)
+  @UseGuards(OAuthGuard, RoleGuard)
+  @Roles('.permissions.get')
   async findAll() {
     return await this.permissionsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.permissionsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updatePermissionDto: UpdatePermissionDto,
-  ) {
-    return this.permissionsService.update(+id, updatePermissionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.permissionsService.remove(+id);
   }
 }

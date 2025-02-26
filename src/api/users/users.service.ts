@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { paginate } from 'src/commons';
 
 @Injectable()
 export class UsersService {
@@ -11,20 +12,38 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
   ) {}
-  create(createUserDto: CreateUserDto) {
+  create(_createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }
 
   async findAll() {
-    const users = await this.userRepo.find()
-    return users;
+    return await paginate(
+      this.userRepo,
+      { page: 1, limit: 15 },
+      {
+        select: [
+          'active',
+          'birthday',
+          'createdAt',
+          'deletedAt',
+          'email',
+          'fullname',
+          'gender',
+          'id',
+          'media',
+          'roles',
+          'telephone',
+          'updatedAt',
+        ],
+      },
+    );
   }
 
   findOne(id: number) {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  update(id: number, _updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 

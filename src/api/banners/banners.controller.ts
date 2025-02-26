@@ -1,13 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { BannersService } from './banners.service';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { NAME } from 'src/constants';
+import { OAuthGuard, RoleGuard } from 'src/middlewares';
+import { Roles } from 'src/decorators';
 
 @Controller('banners')
 export class BannersController {
   constructor(private readonly bannersService: BannersService) {}
 
   @Post()
+  @ApiBearerAuth(NAME.JWT)
+  @UseGuards(OAuthGuard, RoleGuard)
+  @Roles('.banners.post')
   create(@Body() createBannerDto: CreateBannerDto) {
     return this.bannersService.create(createBannerDto);
   }

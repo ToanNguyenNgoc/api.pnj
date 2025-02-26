@@ -2,8 +2,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
-import { jsonResponse } from 'src/commons';
-import { permissionsArray } from 'src/commons';
+import { paginate } from 'src/commons';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Permission } from './entities/permission.entity';
@@ -19,25 +18,16 @@ export class PermissionsService {
   }
 
   async findAll() {
-    for (const item of permissionsArray) {
-      if (!(await this.permissionRepo.findOneBy({ name: item }))) {
-        const permission = this.permissionRepo.create({
-          name: item,
-          guard_name: 'api',
-        });
-        await this.permissionRepo.save(permission);
-      }
-    }
-    const page = 1;
-    const limit = 5;
-    const permissions = this.permissionRepo.createQueryBuilder('tb_permission');
-    return jsonResponse(permissions, {});
+    return await paginate(
+      this.permissionRepo,
+      { page: 1, limit: 500 },
+      {
+        order: { id: 'DESC' },
+      },
+    );
   }
 
   findOne(id: number) {
-    return jsonResponse(
-      this.permissionRepo.createQueryBuilder('tb_permission').where({ id: id }),
-    );
     return `This action returns a #${id} permission`;
   }
 

@@ -1,19 +1,39 @@
 import { NotFoundException } from '@nestjs/common';
 import { SelectQueryBuilder } from 'typeorm';
 
-export async function jsonResponse<T>(
-  queryBuilder: SelectQueryBuilder<T>,
-  pagination?: { page?: number; limit?: number },
+export function jsonResponse<T>(data: T, message?: string) {
+  return {
+    statusCode: 200,
+    message,
+    context: data,
+  };
+}
+
+import { Repository, FindManyOptions } from 'typeorm';
+
+export interface PaginationOptions {
+  page?: number;
+  limit?: number;
+}
+
+export async function paginate<T>(
+  repository: Repository<T>,
+  options: PaginationOptions,
+  queryOptions?: FindManyOptions<T>,
 ) {
-  let context;
-  if (pagination) {
-    const page = pagination?.page || 1;
-    const limit = pagination?.limit || 15;
-    const [data, total] = await queryBuilder
-      .offset(page * limit - limit)
-      .limit(limit)
-      .getManyAndCount();
-    context = {
+  const { page = 1, limit = 15 } = options;
+  const skip = (page - 1) * limit;
+
+  const [data, total] = await repository.findAndCount({
+    ...queryOptions,
+    skip,
+    take: limit,
+  });
+
+  return {
+    statusCode: 200,
+    message: '',
+    context: {
       data: data,
       total: total,
       total_page: Math.ceil(total / limit),
@@ -23,14 +43,6 @@ export async function jsonResponse<T>(
         page + 1 > Math.ceil(total / limit)
           ? Math.ceil(total / limit)
           : page + 1,
-    };
-  } else {
-    context = await queryBuilder.getOne();
-    if (!context) throw new NotFoundException('Resource not found');
-  }
-  return {
-    statusCode: 200,
-    message: '',
-    context,
+    },
   };
 }

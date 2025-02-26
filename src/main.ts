@@ -3,10 +3,12 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule } from '@nestjs/swagger';
 import { customOptions, options } from './docs';
+import { ValidationPipe } from '@nestjs/common';
 import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
   //ADD: swagger
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document, customOptions);
@@ -21,9 +23,9 @@ const generatePermissions = async (app: NestExpressApplication) => {
   const routes = router.stack
     .filter((layer) => layer.route)
     .map((layer) =>
-      `${layer.route?.path}.${Object.keys(layer.route?.methods)[0]}`.replaceAll(
-        '/',
-        '',
+      `${layer.route?.path}.${Object.keys(layer.route?.methods)[0]}`.replace(
+        /\//g,
+        '.',
       ),
     );
 

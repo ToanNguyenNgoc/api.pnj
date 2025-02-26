@@ -1,45 +1,53 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { SWAGGER_TAG } from 'src/constants';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { NAME, SWAGGER_TAG } from 'src/constants';
+import { OAthService } from 'src/services';
+import { ChangePasswordDTO, LoginDTO, UpdateProfileDTO } from './dto';
+import { jsonResponse } from 'src/commons';
+import { OAuthGuard } from 'src/middlewares';
+import { RequestHeaderType } from 'src/types';
+import { User } from '../users/entities/user.entity';
 
 @ApiTags(SWAGGER_TAG.Auth)
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly oauthService: OAthService,
+  ) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @Post('login')
+  async login(@Body() body: LoginDTO) {
+    return jsonResponse(await this.oauthService.login(body));
+  }
+  @Get('profile')
+  @ApiBearerAuth(NAME.JWT)
+  @UseGuards(OAuthGuard)
+  async profile(@Req() req: RequestHeaderType<User>) {
+    return jsonResponse(await this.oauthService.onUser(req.user.id));
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @Post('profile')
+  @ApiBearerAuth(NAME.JWT)
+  @UseGuards(OAuthGuard)
+  async updateProfile(
+    @Req() req: RequestHeaderType<User>,
+    @Body() body: UpdateProfileDTO,
+  ) {
+    return jsonResponse(
+      await this.authService.updateProfile(req.user.id, body),
+    );
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Post('chance-password')
+  @ApiBearerAuth(NAME.JWT)
+  @UseGuards(OAuthGuard)
+  async changePassword(
+    @Req() req: RequestHeaderType<User>,
+    @Body() body: ChangePasswordDTO,
+  ) {
+    await this.authService.changePassword(req.user.id, body);
+    return jsonResponse([]);
   }
 }
