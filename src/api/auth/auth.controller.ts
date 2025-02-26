@@ -40,7 +40,7 @@ export class AuthController {
     );
   }
 
-  @Post('chance-password')
+  @Post('change-password')
   @ApiBearerAuth(NAME.JWT)
   @UseGuards(OAuthGuard)
   async changePassword(
