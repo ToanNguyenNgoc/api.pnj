@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Banner } from './entities';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class BannersService {
+  @InjectRepository(Banner)
+  private readonly bannerRepo: Repository<Banner>;
   create(createBannerDto: CreateBannerDto) {
     return 'This action adds a new banner';
   }

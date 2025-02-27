@@ -6,13 +6,13 @@ import { OAuthGuard, RoleGuard } from 'src/middlewares';
 import { Roles } from 'src/decorators';
 
 @ApiTags(SWAGGER_TAG.RolePermission)
+@ApiBearerAuth(NAME.JWT)
+@UseGuards(OAuthGuard, RoleGuard)
 @Controller('permissions')
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
   @Get()
-  @ApiBearerAuth(NAME.JWT)
-  @UseGuards(OAuthGuard, RoleGuard)
   @Roles('.permissions.get')
   async findAll() {
     return await this.permissionsService.findAll();

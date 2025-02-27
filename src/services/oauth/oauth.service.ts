@@ -51,6 +51,7 @@ export class OAthService {
         },
       },
     });
+    if (!user) throw new NotFoundException('User not found');
     if (!withPassword) {
       delete user.password;
     }
@@ -58,13 +59,13 @@ export class OAthService {
   }
   async validateMailExist(email?: string) {
     if (!email) return true;
-    const user = this.userRepo.findOneBy({ email });
+    const user = await this.userRepo.findOneBy({ email });
     if (user) throw new BadRequestException('Email already exists');
     return true;
   }
   async validateTelephoneExist(telephone?: string) {
     if (!telephone) return true;
-    const user = this.userRepo.findOneBy({ telephone });
+    const user = await this.userRepo.findOneBy({ telephone });
     if (user) throw new BadRequestException('Telephone already exists');
     return true;
   }

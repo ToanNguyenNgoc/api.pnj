@@ -12,6 +12,7 @@ import { permissionsArray } from 'src/commons';
 
 @Injectable()
 export class AdminService {
+  private hashHelper = new HashHelper();
   constructor(
     @InjectRepository(Role)
     private readonly roleRepo: Repository<Role>,
@@ -19,9 +20,8 @@ export class AdminService {
     private readonly permissionRepo: Repository<Permission>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-    private readonly hashHelper: HashHelper,
   ) {}
-  create(createAdminDto: CreateAdminDto) {
+  async create(createAdminDto: CreateAdminDto) {
     return 'This action adds a new admin';
   }
   async instance() {

@@ -1,4 +1,6 @@
 export const SWAGGER_TAG = {
+  Banner: 'Banner',
+  Category: 'Category',
   Auth: 'Auth',
   User: 'User',
   RolePermission: 'Role & Permission',

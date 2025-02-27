@@ -1,3 +1,5 @@
+export * from './base-service/base.service';
+
 export * from './oauth/oauth.module';
 export * from './oauth/oauth.service';
 

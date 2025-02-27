@@ -11,12 +11,13 @@ import {
 import { BannersService } from './banners.service';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { NAME } from 'src/constants';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { NAME, SWAGGER_TAG } from 'src/constants';
 import { OAuthGuard, RoleGuard } from 'src/middlewares';
 import { Roles } from 'src/decorators';
 
 @Controller('banners')
+@ApiTags(SWAGGER_TAG.Banner)
 export class BannersController {
   constructor(private readonly bannersService: BannersService) {}
 

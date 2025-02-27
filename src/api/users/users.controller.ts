@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,6 +16,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { NAME, SWAGGER_TAG } from 'src/constants';
 import { OAuthGuard, RoleGuard } from 'src/middlewares';
 import { Roles } from 'src/decorators';
+import { QueryUser } from './dto';
 
 @ApiTags(SWAGGER_TAG.User)
 @Controller('users')
@@ -31,8 +33,8 @@ export class UsersController {
 
   @Get()
   @Roles('.users.get')
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query() query: QueryUser) {
+    return this.usersService.findAll(query);
   }
 
   @Get(':id')

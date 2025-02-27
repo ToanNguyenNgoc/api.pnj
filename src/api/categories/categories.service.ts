@@ -1,26 +1,56 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Category } from './entities';
+import { Repository } from 'typeorm';
+import { BaseService, GetMediaService } from 'src/services';
+import { CreateCategoryDto, QrCategory, UpdateCategoryDto } from './dto';
+import { slugify } from 'src/utils';
 
 @Injectable()
-export class CategoriesService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+export class CategoriesService extends BaseService<Category> {
+  constructor(
+    @InjectRepository(Category)
+    private readonly categoryRepo: Repository<Category>,
+    private readonly mediaService: GetMediaService,
+  ) {
+    super(categoryRepo);
+  }
+  async create(createCategoryDto: CreateCategoryDto) {
+    return this.createData(Category, {
+      media: createCategoryDto.media_id
+        ? await this.mediaService.getOne(createCategoryDto.media_id)
+        : undefined,
+      name: createCategoryDto.name,
+      name_slugify: slugify(createCategoryDto.name),
+    });
   }
 
-  findAll() {
-    return `This action returns all categories`;
+  findAll(query: QrCategory) {
+    return this.paginate(query, {
+      where: { name: this.getLike(query.search) },
+      relations: { media: true },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  findOne(id: string) {
+    return this.detail(
+      id,
+      { throwNotFound: true, allowSlugify: true },
+      { relations: { media: true } },
+    );
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    return this.findAndUpdate(id, {
+      name: updateCategoryDto.name,
+      active: updateCategoryDto.active,
+      media: updateCategoryDto.media_id
+        ? await this.mediaService.getOne(updateCategoryDto.media_id)
+        : undefined,
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} category`;
+    this.softDelete(id);
   }
 }
