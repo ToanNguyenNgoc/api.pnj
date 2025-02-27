@@ -63,7 +63,7 @@ export class UsersService extends BaseService<User> {
         'telephone',
         'updatedAt',
       ],
-      relations: { roles: true },
+      relations: { roles: true, media: true },
     });
   }
 
