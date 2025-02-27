@@ -21,7 +21,7 @@ import { QueryUser } from './dto';
 @ApiTags(SWAGGER_TAG.User)
 @Controller('users')
 @ApiBearerAuth(NAME.JWT)
-// @UseGuards(OAuthGuard, RoleGuard)
+@UseGuards(OAuthGuard, RoleGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
