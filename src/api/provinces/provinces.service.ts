@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProvinceDto } from './dto/create-province.dto';
-import { UpdateProvinceDto } from './dto/update-province.dto';
 import { InjectQueue } from '@nestjs/bull';
 import { QUEUE_NAME } from 'src/constants';
 import { Queue } from 'bull';
 import { BaseService } from 'src/services';
-import { Province } from './entities';
+import { District, Province, Ward } from './entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -19,24 +17,41 @@ export class ProvincesService extends BaseService<Province> {
   ) {
     super(provinceRepo);
   }
-  create(createProvinceDto: CreateProvinceDto) {
-    return 'This action adds a new province';
-  }
 
   async findAll() {
     await this.createProvinceQueue.add({}, { delay: 1000 });
-    return this.paginate({ limit: 100 });
+    return this.paginate({ limit: 100 }, { order: { code: 'ASC' } });
   }
+}
 
-  findOne(id: number) {
-    return `This action returns a #${id} province`;
+@Injectable()
+export class DistrictService extends BaseService<District> {
+  constructor(
+    @InjectRepository(District)
+    private readonly districtRepo: Repository<District>,
+  ) {
+    super(districtRepo);
   }
-
-  update(id: number, updateProvinceDto: UpdateProvinceDto) {
-    return `This action updates a #${id} province`;
+  async findAll(id) {
+    return this.paginate(
+      { limit: 100 },
+      { where: { province_code: id }, order: { code: 'ASC' } },
+    );
   }
+}
 
-  remove(id: number) {
-    return `This action removes a #${id} province`;
+@Injectable()
+export class WardService extends BaseService<Ward> {
+  constructor(
+    @InjectRepository(Ward)
+    private readonly wardRepo: Repository<Ward>,
+  ) {
+    super(wardRepo);
+  }
+  async findAll(id: number) {
+    return this.paginate(
+      { limit: 100 },
+      { where: { district_code: id }, order: { code: 'ASC' } },
+    );
   }
 }

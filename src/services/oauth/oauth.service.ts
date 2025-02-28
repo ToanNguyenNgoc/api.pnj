@@ -21,14 +21,20 @@ export class OAthService {
     private readonly jwtService: JwtService,
   ) {}
   async login(body: LoginDTO) {
-    const user = await this.userRepo.findOneBy({ email: body.email });
+    const user = await this.userRepo.findOne({
+      where: { email: body.email },
+      relations: { roles: true },
+    });
     if (!user) throw new NotFoundException('Email not found');
     if (!user.active) throw new ForbiddenException('User is deactivated');
     if (!(await this.hashHelper.compare(body.password, user.password))) {
       throw new ForbiddenException('Password wrong');
     }
+    const role = user.roles.length > 0;
     delete user.password;
+    delete user.roles;
     return Object.assign(user, {
+      role,
       token: await this.createToken(user),
     });
   }

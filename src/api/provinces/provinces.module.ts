@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ProvincesService } from './provinces.service';
-import { ProvincesController } from './provinces.controller';
+import {
+  DistrictService,
+  ProvincesService,
+  WardService,
+} from './provinces.service';
+import { ProvincesController, WardController } from './provinces.controller';
 import { ProvinceConsumer } from 'src/jobs';
 import { BullModule } from '@nestjs/bull';
 import { QUEUE_NAME } from 'src/constants';
@@ -12,7 +16,7 @@ import { District, Province, Ward } from './entities';
     TypeOrmModule.forFeature([Province, District, Ward]),
     BullModule.registerQueue({ name: QUEUE_NAME.instance_province }),
   ],
-  controllers: [ProvincesController],
-  providers: [ProvincesService, ProvinceConsumer],
+  controllers: [ProvincesController, WardController],
+  providers: [ProvincesService, ProvinceConsumer, DistrictService, WardService],
 })
 export class ProvincesModule {}

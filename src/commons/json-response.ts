@@ -1,6 +1,3 @@
-import { NotFoundException } from '@nestjs/common';
-import { SelectQueryBuilder } from 'typeorm';
-
 export function jsonResponse<T>(data: T, message?: string) {
   return {
     statusCode: 200,

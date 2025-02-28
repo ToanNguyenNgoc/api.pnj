@@ -31,12 +31,7 @@
   ".categories.:id.get": ".categories.:id.get",
   ".categories.:id.patch": ".categories.:id.patch",
   ".categories.:id.delete": ".categories.:id.delete",
-  ".admin.post": ".admin.post",
   ".admin.instance.post": ".admin.instance.post",
-  ".admin.get": ".admin.get",
-  ".admin.:id.get": ".admin.:id.get",
-  ".admin.:id.patch": ".admin.:id.patch",
-  ".admin.:id.delete": ".admin.:id.delete",
   ".media.post": ".media.post",
   ".media.:imagename.get": ".media.:imagename.get",
   ".product.post": ".product.post",
@@ -44,5 +39,7 @@
   ".product.:id.get": ".product.:id.get",
   ".product.:id.patch": ".product.:id.patch",
   ".product.:id.delete": ".product.:id.delete",
-  ".provinces.get": ".provinces.get"
+  ".provinces.get": ".provinces.get",
+  ".provinces.:id.districts.get": ".provinces.:id.districts.get",
+  ".districts.:id.wards.get": ".districts.:id.wards.get"
 }
