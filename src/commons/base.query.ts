@@ -7,4 +7,6 @@ export class BaseQuery {
   readonly limit?: number;
   @ApiProperty({ required: false })
   readonly search?: string;
+  @ApiProperty({ required: false })
+  active?: boolean;
 }

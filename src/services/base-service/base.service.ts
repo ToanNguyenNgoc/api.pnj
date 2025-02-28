@@ -121,4 +121,8 @@ export class BaseService<T> {
     if (!sort) return undefined;
     return { [sort.replace('-', '')]: sort.includes('-') ? 'DESC' : 'ASC' };
   }
+  getIncludes(key: string, relations?: string) {
+    if (!relations) return undefined;
+    return relations.split('|').includes(key);
+  }
 }

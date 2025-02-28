@@ -12,6 +12,8 @@ import { MediaModule } from './media/media.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { Media } from './media/entities';
+import { ProductModule } from './product/product.module';
+import { ProvincesModule } from './provinces/provinces.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { Media } from './media/entities';
     CategoriesModule,
     AdminModule,
     MediaModule,
+    ProductModule,
+    ProvincesModule,
   ],
   providers: [AuthStrategy],
 })

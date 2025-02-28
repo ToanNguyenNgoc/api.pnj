@@ -9,6 +9,9 @@ import { HashHelper } from '../../helpers';
 import { jsonResponse } from 'src/commons';
 import { Permission } from '../permissions/entities/permission.entity';
 import { permissionsArray } from 'src/commons';
+import { InjectQueue } from '@nestjs/bull';
+import { QUEUE_NAME } from 'src/constants';
+import { Queue } from 'bull';
 
 @Injectable()
 export class AdminService {
@@ -20,8 +23,13 @@ export class AdminService {
     private readonly permissionRepo: Repository<Permission>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+    @InjectQueue(QUEUE_NAME.province)
+    private readonly provinceQueue: Queue,
   ) {}
   async create(createAdminDto: CreateAdminDto) {
+    const data = { message: 'Instance province' };
+    const result = await this.provinceQueue.add(data, { delay: 3000 });
+    console.log(result);
     return 'This action adds a new admin';
   }
   async instance() {

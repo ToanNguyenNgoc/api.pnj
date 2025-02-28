@@ -1,6 +1,7 @@
 import { Media } from 'src/api/media/entities';
+import { Product } from 'src/api/product/entities';
 import { BaseEntity } from 'src/commons';
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 
 @Entity('tb_category')
 export class Category extends BaseEntity {
@@ -16,4 +17,7 @@ export class Category extends BaseEntity {
   @OneToOne(() => Media)
   @JoinColumn()
   media: Media;
+
+  @OneToMany(() => Product, (product) => product.category)
+  products: Product[];
 }

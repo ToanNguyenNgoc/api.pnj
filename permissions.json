@@ -38,5 +38,11 @@
   ".admin.:id.patch": ".admin.:id.patch",
   ".admin.:id.delete": ".admin.:id.delete",
   ".media.post": ".media.post",
-  ".media.:imagename.get": ".media.:imagename.get"
+  ".media.:imagename.get": ".media.:imagename.get",
+  ".product.post": ".product.post",
+  ".product.get": ".product.get",
+  ".product.:id.get": ".product.:id.get",
+  ".product.:id.patch": ".product.:id.patch",
+  ".product.:id.delete": ".product.:id.delete",
+  ".provinces.get": ".provinces.get"
 }

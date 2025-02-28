@@ -1,15 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsOptional } from 'class-validator';
 import { BaseQuery } from 'src/commons';
-
-const sortable = [
-  'createdAt',
-  '-createdAt',
-  'id',
-  '-id',
-  'fullname',
-  '-fullname',
-];
+import { User } from '../entities/user.entity';
 
 export class QueryUser extends BaseQuery {
   @ApiProperty({ required: false })
@@ -20,9 +12,9 @@ export class QueryUser extends BaseQuery {
 
   @ApiProperty({
     required: false,
-    description: sortable.join(', '),
+    description: User.sortable.join(', '),
   })
   @IsOptional()
-  @IsIn(sortable)
+  @IsIn(User.sortable)
   sort?: string;
 }

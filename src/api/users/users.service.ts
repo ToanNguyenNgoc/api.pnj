@@ -49,20 +49,7 @@ export class UsersService extends BaseService<User> {
         }),
       ),
       order: this.getSort(query.sort),
-      select: [
-        'active',
-        'birthday',
-        'createdAt',
-        'deletedAt',
-        'email',
-        'fullname',
-        'gender',
-        'id',
-        'media',
-        'roles',
-        'telephone',
-        'updatedAt',
-      ],
+      select: User.select,
       relations: { roles: true, media: true },
     });
   }

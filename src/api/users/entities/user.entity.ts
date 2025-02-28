@@ -17,6 +17,29 @@ import { Media } from 'src/api/media/entities';
 @Entity({ name: 'tb_user' })
 export class User {
   static SUPER_ADMIN = 'SUPER_ADMIN';
+  static columns = [
+    'active',
+    'birthday',
+    'createdAt',
+    'deletedAt',
+    'email',
+    'fullname',
+    'gender',
+    'id',
+    'media',
+    'roles',
+    'telephone',
+    'updatedAt',
+  ];
+  static select = Object.fromEntries(User.columns.map((col) => [col, true]));
+  static sortable = [
+    'createdAt',
+    '-createdAt',
+    'id',
+    '-id',
+    'fullname',
+    '-fullname',
+  ];
 
   @PrimaryGeneratedColumn()
   id: number;
