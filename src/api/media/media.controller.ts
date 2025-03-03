@@ -44,7 +44,7 @@ export class MediaController {
 
   @Post()
   @ApiBearerAuth(NAME.JWT)
-  // @UseGuards(OAuthGuard)
+  @UseGuards(OAuthGuard)
   @ApiOkResponse({ description: 'Upload image' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({

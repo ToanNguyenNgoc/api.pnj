@@ -14,6 +14,7 @@ export const NAME = {
   MEDIA: 'media',
 };
 export const QUEUE_NAME = {
+  send_mail: 'send_mail',
   instance_province: 'instance_province',
   province: 'province',
 };

@@ -5,10 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmAsyncConfig } from 'database/data-source';
 import { ApiModule } from './api/api.module';
-import { AuthModule } from './api/auth/auth.module';
-import { UsersModule } from './api/users/users.module';
 import { JwtConfigModule } from './commons';
-import { MediaModule } from './api/media/media.module';
 import { BullModule } from '@nestjs/bull';
 
 @Module({
@@ -22,10 +19,7 @@ import { BullModule } from '@nestjs/bull';
       },
     }),
     ApiModule,
-    AuthModule,
-    UsersModule,
     JwtConfigModule,
-    MediaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

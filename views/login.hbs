@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #4A00E0, #FF0099);
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            background: #f9f9f9;
+        }
+        .input-field i {
+            padding: 10px;
+            color: #888;
+        }
+        .input-field input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 5px;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(to right, #4A00E0, #FF0099);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .social-login {
+            margin: 20px 0;
+        }
+        .social-login a {
+            margin: 0 10px;
+            font-size: 20px;
+            color: #333;
+            text-decoration: none;
+        }
+        .signup-link {
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <div class="input-field">
+            <i class="fas fa-user"></i>
+            <input type="text" placeholder="Type your username">
+        </div>
+        <div class="input-field">
+            <i class="fas fa-lock"></i>
+            <input type="password" placeholder="Type your password">
+        </div>
+        <button class="login-btn">LOGIN</button>
+    </div>
+</body>
+</html>

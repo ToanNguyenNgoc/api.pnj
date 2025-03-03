@@ -1,9 +1,24 @@
-import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Put,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 import { NAME, SWAGGER_TAG } from 'src/constants';
 import { OAthService } from 'src/services';
-import { ChangePasswordDTO, LoginDTO, UpdateProfileDTO } from './dto';
+import {
+  ChangePasswordDTO,
+  LoginDTO,
+  RegisterProfileDTO,
+  ResendMailVerificationDTO,
+  UpdateProfileDTO,
+  VerificationRegisterDTO,
+} from './dto';
 import { jsonResponse } from 'src/commons';
 import { OAuthGuard } from 'src/middlewares';
 import { RequestHeaderType } from 'src/types';
@@ -28,7 +43,7 @@ export class AuthController {
     return jsonResponse(await this.oauthService.onUser(req.user.id));
   }
 
-  @Post('profile')
+  @Put('profile')
   @ApiBearerAuth(NAME.JWT)
   @UseGuards(OAuthGuard)
   async updateProfile(
@@ -48,6 +63,24 @@ export class AuthController {
     @Body() body: ChangePasswordDTO,
   ) {
     await this.authService.changePassword(req.user.id, body);
+    return jsonResponse([]);
+  }
+
+  @Post('register')
+  async register(@Body() body: RegisterProfileDTO) {
+    return this.authService.register(body);
+  }
+
+  @Post('verification')
+  async verification(@Body() body: VerificationRegisterDTO) {
+    await this.authService.verification(body);
+    return jsonResponse([]);
+  }
+
+  @ApiExcludeEndpoint()
+  @Post('verification-resend')
+  async resendVerification(@Body() body: ResendMailVerificationDTO) {
+    await this.authService.resendVerification(body);
     return jsonResponse([]);
   }
 }

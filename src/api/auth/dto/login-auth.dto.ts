@@ -10,6 +10,28 @@ export class LoginDTO {
   @ApiProperty({ default: '111111' })
   readonly password: string;
 }
+export class RegisterProfileDTO {
+  @ApiProperty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty()
+  @IsOptional()
+  fullname: string;
+
+  @ApiProperty()
+  @IsOptional()
+  telephone: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  password: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  gender: boolean;
+}
 
 export class UpdateProfileDTO {
   @ApiProperty()
@@ -41,4 +63,22 @@ export class ChangePasswordDTO {
 
   @ApiProperty()
   new_password: string;
+}
+export class VerificationRegisterDTO {
+  @ApiProperty()
+  @IsNotEmpty()
+  code: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  recaptcha: string;
+}
+export class ResendMailVerificationDTO {
+  @ApiProperty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  recaptcha: string;
 }

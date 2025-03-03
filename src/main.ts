@@ -5,6 +5,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { customOptions, options } from './docs';
 import { ValidationPipe } from '@nestjs/common';
 import * as fs from 'fs';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -15,8 +16,13 @@ async function bootstrap() {
   await app.listen(process.env.APP_PORT || 4080);
   //ADD: permissions
   await generatePermissions(app);
+  //ADD: public
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  // Set views directory
+  app.setViewEngine('hbs');
   console.log(`Server run PORT:${process.env.APP_PORT}`);
 }
+
 const generatePermissions = async (app: NestExpressApplication) => {
   const server = app.getHttpServer();
   const router = server._events.request._router;
