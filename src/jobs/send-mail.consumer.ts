@@ -42,7 +42,7 @@ export class SendMailConsumer {
       email,
       redirect_url: `${
         process.env.APP_URL_CLIENT
-      }/verify-mail?code=${this.hasHelper.createVerificationCode(email)}`,
+      }/verify-mail?token=${this.hasHelper.createVerificationCode(email)}`,
     };
     return {
       data,
