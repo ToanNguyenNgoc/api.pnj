@@ -5,9 +5,8 @@ import sgMail from '@sendgrid/mail';
 import handlebars from 'handlebars';
 import fs from 'fs';
 import path from 'path';
-import moment from 'moment';
-import { aesEncode } from 'src/utils';
 import { HashHelper } from 'src/helpers';
+import { aesEncode } from 'src/utils';
 
 type MailOptions = {
   email: string;
@@ -37,12 +36,10 @@ export class SendMailConsumer {
     return compiledTemplate(data);
   }
   withVerificationRegister(email: string) {
-    console.log(this.hasHelper.createVerificationCode(email));
+    const code = this.hasHelper.createToken(aesEncode(email), '3m');
     const data = {
       email,
-      redirect_url: `${
-        process.env.APP_URL_CLIENT
-      }/verification/${this.hasHelper.createVerificationCode(email)}`,
+      redirect_url: `${process.env.APP_URL_CLIENT}/verification/${code}`,
     };
     return {
       data,

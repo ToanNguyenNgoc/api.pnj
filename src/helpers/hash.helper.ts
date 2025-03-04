@@ -1,6 +1,8 @@
 import * as bcrypt from 'bcrypt';
 import moment from 'moment';
 import { aesDecode, aesEncode } from 'src/utils';
+import jwt from 'jsonwebtoken';
+import { BadRequestException } from '@nestjs/common';
 
 export class HashHelper {
   async hash(password: string) {
@@ -33,5 +35,37 @@ export class HashHelper {
       data,
       dateValid,
     };
+  }
+  createToken(text: string, expiresIn: string) {
+    const accessToken = jwt.sign(
+      {
+        ctx: text,
+      },
+      String(process.env.JWT_SECRET_KEY),
+      { expiresIn },
+    );
+    return accessToken;
+  }
+  async verifyToken(token: string) {
+    let payload;
+    jwt.verify(
+      token,
+      String(process.env.JWT_SECRET_KEY),
+      async (error, jwtDecode) => {
+        if (error) return;
+        payload = jwtDecode;
+      },
+    );
+    return payload;
+  }
+  async getEmail(token: string) {
+    let email;
+    try {
+      email = aesDecode((await this.verifyToken(token)).ctx);
+    } catch (error) {
+      throw new BadRequestException('Invalid verification token');
+    }
+    if (!email) throw new BadRequestException('Invalid verification token');
+    return email;
   }
 }

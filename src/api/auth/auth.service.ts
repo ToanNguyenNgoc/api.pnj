@@ -73,13 +73,9 @@ export class AuthService extends BaseService<User> {
     });
   }
   async verification(body: VerificationRegisterDTO) {
-    const { data, dateValid } = this.hashHelper.compareVerificationCode(
-      body.code,
-    );
-    if (!data) throw new BadRequestException('Invalid verification code');
-    if (!dateValid)
-      throw new BadRequestException('The verification code has expired');
-    const user = await this.userRepo.findOne({ where: { email: data.email } });
+    const token = body.code;
+    const email = await this.hashHelper.getEmail(token);
+    const user = await this.userRepo.findOne({ where: { email } });
     if (user.active) throw new BadRequestException('User has been verified');
     user.active = true;
     await this.userRepo.save(user);
