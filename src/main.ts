@@ -10,6 +10,14 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe());
+  //ADD: CORS
+  const corsOrigin = process.env.APP_CORS_ORIGIN?.split(',');
+  app.enableCors({
+    origin: corsOrigin,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    credentials: true,
+  });
   //ADD: swagger
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document, customOptions);

@@ -26,7 +26,7 @@ export class HashHelper {
     try {
       data = JSON.parse(aesDecode(code));
     } catch (error) {}
-    if (data.expired_at) {
+    if (data?.expired_at) {
       dateValid = moment().isBefore(data.expired_at);
     }
     return {
