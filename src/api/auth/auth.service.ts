@@ -83,12 +83,17 @@ export class AuthService extends BaseService<User> {
   }
   async resendVerification(body: ResendMailVerificationDTO) {
     const user = await this.userRepo.findOne({ where: { email: body.email } });
-    if (!user) throw new BadRequestException('Email not found');
-    if (user.active) throw new BadRequestException('User has been verified');
-    await this.sendMail.add(
-      { email: body.email, template: 'verification-register' },
-      { delay: 1000 },
-    );
+    // if (!user) throw new BadRequestException('Email not found');
+    // if (user.active) throw new BadRequestException('User has been verified');
+    // await this.sendMail.add(
+    //   { email: body.email, template: 'verification-register' },
+    //   { delay: 1000 },
+    // );
+    await this.sendMail.add({
+      email: user.email,
+      fullname: user.fullname,
+      template: 'welcome',
+    });
     return;
   }
 }

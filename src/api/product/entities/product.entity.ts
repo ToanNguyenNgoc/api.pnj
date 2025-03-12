@@ -26,4 +26,13 @@ export class Product extends BaseEntity {
 
   @Column({ nullable: true })
   content: string;
+
+  @Column({ nullable: true, default: 0 })
+  price: number;
+
+  @Column({ nullable: true, default: 0 })
+  special_price: number;
+
+  @Column({ nullable: true, default: 0 })
+  quantity: number;
 }

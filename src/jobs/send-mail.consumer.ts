@@ -11,6 +11,7 @@ import { aesEncode } from 'src/utils';
 type MailOptions = {
   email: string;
   template: string;
+  fullname?: string;
 };
 
 @Processor(QUEUE_NAME.send_mail)
@@ -46,6 +47,12 @@ export class SendMailConsumer {
       subject: 'SHADOW - VERIFICATION REGISTER',
     };
   }
+  withWelcome(email: string, fullname: string) {
+    return {
+      data: { email, fullname },
+      subject: 'SHADOW - WELCOME',
+    };
+  }
   async sendMail(options: MailOptions) {
     const { email, template } = options;
     console.log('Run send mail:', email);
@@ -55,6 +62,11 @@ export class SendMailConsumer {
       const register = this.withVerificationRegister(email);
       subject = register.subject;
       data = register.data;
+    }
+    if (template === 'welcome') {
+      const welcome = this.withWelcome(email, options.fullname || '');
+      data = welcome.data;
+      subject = welcome.subject;
     }
     const htmlContent = await this.compileTemplate(template, data);
     try {

@@ -28,11 +28,17 @@ export class ProductService extends BaseService<Product> {
     super(productRepo);
   }
   async create(createProductDto: CreateProductDto) {
+    const firstItem =
+      createProductDto.items.length > 0 ? createProductDto.items[0] : null;
     const product = (await this.createData(Product, {
       name: createProductDto.name,
       content: createProductDto.content,
       name_slugify: slugify(createProductDto.name),
       category: await this.onCategory(createProductDto.category_id),
+      price: createProductDto.price || firstItem?.price || 0,
+      special_price:
+        createProductDto.special_price || firstItem?.special_price || 0,
+      quantity: createProductDto.quantity || firstItem?.quantity || 0,
     }).then((res) => res.context)) as Product;
     await this.saveMultipleProductMedia(product, createProductDto.media_ids);
     await this.saveMultipleProductItem(product, createProductDto.items);
@@ -72,6 +78,9 @@ export class ProductService extends BaseService<Product> {
       content: updateProductDto.content,
       active: updateProductDto.active,
       category: await this.onCategory(updateProductDto.category_id),
+      price: updateProductDto.price,
+      special_price: updateProductDto.special_price,
+      quantity: updateProductDto.quantity,
     }).then((res) => res.context)) as Product;
     await this.saveMultipleProductMedia(product, updateProductDto.media_ids);
     await this.updateMultipleProductItem(product, updateProductDto.items);
@@ -82,7 +91,7 @@ export class ProductService extends BaseService<Product> {
     return this.softDelete(id);
   }
   async onCategory(id?: number) {
-    if (!id) return null;
+    if (!id) return undefined;
     const category = await this.categoryRepo.findOne({ where: { id } });
     if (!category) throw new NotFoundException('Category not found');
     return category;

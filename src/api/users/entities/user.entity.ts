@@ -10,9 +10,11 @@ import {
   JoinTable,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Media } from 'src/api/media/entities';
+import { UserAddress } from 'src/api/user-addresses/entities';
 
 @Entity({ name: 'tb_user' })
 export class User {
@@ -82,4 +84,7 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  @OneToMany(() => UserAddress, (address) => address.user)
+  addresses: UserAddress[];
 }

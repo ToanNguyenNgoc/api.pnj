@@ -12,6 +12,7 @@ import { permissionsArray } from 'src/commons';
 import { InjectQueue } from '@nestjs/bull';
 import { QUEUE_NAME } from 'src/constants';
 import { Queue } from 'bull';
+import { PaymentMethod } from '../payment-methods/entities';
 
 @Injectable()
 export class AdminService {
@@ -25,6 +26,8 @@ export class AdminService {
     private readonly userRepo: Repository<User>,
     @InjectQueue(QUEUE_NAME.province)
     private readonly provinceQueue: Queue,
+    @InjectRepository(PaymentMethod)
+    private readonly paymentMethodRepo: Repository<PaymentMethod>,
   ) {}
   async create(createAdminDto: CreateAdminDto) {
     const data = { message: 'Instance province' };
@@ -63,6 +66,12 @@ export class AdminService {
       user.active = true;
       await this.userRepo.save(user);
     }
+    PaymentMethod.toMethodArray().forEach(async (item) => {
+      await this.paymentMethodRepo.upsert(
+        { name: item.name, method: item.method },
+        ['method'],
+      );
+    });
     return jsonResponse([], 'Instance successfully');
   }
 

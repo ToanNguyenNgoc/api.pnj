@@ -8,6 +8,8 @@ export const SWAGGER_TAG = {
   Admin: 'Admin',
   Media: 'Media',
   Province: 'Province',
+  UserAddresses: 'UserAddresses',
+  PaymentMethod: 'PaymentMethod',
 };
 export const NAME = {
   JWT: 'json_web_token',

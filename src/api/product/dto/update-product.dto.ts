@@ -58,6 +58,21 @@ export class UpdateProductDto {
   @IsBoolean()
   active: boolean;
 
+  @ApiProperty({ default: 0 })
+  @IsOptional()
+  @IsNumber()
+  price: number;
+
+  @ApiProperty({ default: 0 })
+  @IsOptional()
+  @IsNumber()
+  special_price: number;
+
+  @ApiProperty({ default: 0 })
+  @IsOptional()
+  @IsNumber()
+  quantity: number;
+
   @ApiProperty({ default: [] })
   @IsOptional()
   @IsArray()

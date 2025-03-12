@@ -77,7 +77,7 @@ export class AuthController {
     return jsonResponse([]);
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Post('verification-resend')
   async resendVerification(@Body() body: ResendMailVerificationDTO) {
     await this.authService.resendVerification(body);

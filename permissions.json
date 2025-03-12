@@ -44,5 +44,15 @@
   ".product.:id.delete": ".product.:id.delete",
   ".provinces.get": ".provinces.get",
   ".provinces.:id.districts.get": ".provinces.:id.districts.get",
-  ".districts.:id.wards.get": ".districts.:id.wards.get"
+  ".districts.:id.wards.get": ".districts.:id.wards.get",
+  ".user-addresses.post": ".user-addresses.post",
+  ".user-addresses.get": ".user-addresses.get",
+  ".user-addresses.:id.get": ".user-addresses.:id.get",
+  ".user-addresses.:id.patch": ".user-addresses.:id.patch",
+  ".user-addresses.:id.delete": ".user-addresses.:id.delete",
+  ".payment-methods.post": ".payment-methods.post",
+  ".payment-methods.get": ".payment-methods.get",
+  ".payment-methods.:id.get": ".payment-methods.:id.get",
+  ".payment-methods.:id.patch": ".payment-methods.:id.patch",
+  ".payment-methods.:id.delete": ".payment-methods.:id.delete"
 }

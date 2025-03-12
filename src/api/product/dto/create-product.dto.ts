@@ -43,6 +43,21 @@ export class CreateProductDto {
   @IsNumber({}, { each: true })
   media_ids: number[];
 
+  @ApiProperty({ default: 0 })
+  @IsOptional()
+  @IsNumber()
+  price: number;
+
+  @ApiProperty({ default: 0 })
+  @IsOptional()
+  @IsNumber()
+  special_price: number;
+
+  @ApiProperty({ default: 0 })
+  @IsOptional()
+  @IsNumber()
+  quantity: number;
+
   @ApiProperty({
     type: [ProductItemDto],
   })

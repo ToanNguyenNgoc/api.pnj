@@ -14,6 +14,8 @@ import { User } from './users/entities/user.entity';
 import { Media } from './media/entities';
 import { ProductModule } from './product/product.module';
 import { ProvincesModule } from './provinces/provinces.module';
+import { UserAddressesModule } from './user-addresses/user-addresses.module';
+import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { ProvincesModule } from './provinces/provinces.module';
     MediaModule,
     ProductModule,
     ProvincesModule,
+    UserAddressesModule,
+    PaymentMethodsModule,
   ],
   providers: [AuthStrategy],
 })
