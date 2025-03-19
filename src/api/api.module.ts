@@ -16,6 +16,12 @@ import { ProductModule } from './product/product.module';
 import { ProvincesModule } from './provinces/provinces.module';
 import { UserAddressesModule } from './user-addresses/user-addresses.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
+import { OrdersModule } from './orders/orders.module';
+import { OrganizationsModule } from './organizations/organizations.module';
+import { PaymentGatewaysModule } from './payment-gateways/payment-gateways.module';
+import { AdminOrdersModule } from './admin-orders/admin-orders.module';
+import { BlogsModule } from './blogs/blogs.module';
+import { BlogCategoriesModule } from './blog-categories/blog-categories.module';
 
 @Module({
   imports: [
@@ -24,16 +30,22 @@ import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
     GetMediaModule,
     AuthModule,
     UsersModule,
-    PermissionsModule,
-    RolesModule,
+    OrganizationsModule,
     BannersModule,
     CategoriesModule,
-    AdminModule,
-    MediaModule,
+    BlogCategoriesModule,
     ProductModule,
+    BlogsModule,
     ProvincesModule,
     UserAddressesModule,
     PaymentMethodsModule,
+    OrdersModule,
+    AdminModule,
+    AdminOrdersModule,
+    RolesModule,
+    MediaModule,
+    PermissionsModule,
+    PaymentGatewaysModule,
   ],
   providers: [AuthStrategy],
 })

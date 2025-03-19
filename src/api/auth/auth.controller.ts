@@ -14,6 +14,7 @@ import { OAthService } from 'src/services';
 import {
   ChangePasswordDTO,
   LoginDTO,
+  RefreshDto,
   RegisterProfileDTO,
   ResendMailVerificationDTO,
   UpdateProfileDTO,
@@ -23,6 +24,7 @@ import { jsonResponse } from 'src/commons';
 import { OAuthGuard } from 'src/middlewares';
 import { RequestHeaderType } from 'src/types';
 import { User } from '../users/entities/user.entity';
+import { Request } from 'express';
 
 @ApiTags(SWAGGER_TAG.Auth)
 @Controller('auth')
@@ -33,8 +35,8 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  async login(@Body() body: LoginDTO) {
-    return jsonResponse(await this.oauthService.login(body));
+  async login(@Req() request: Request, @Body() body: LoginDTO) {
+    return jsonResponse(await this.oauthService.login(body, request));
   }
   @Get('profile')
   @ApiBearerAuth(NAME.JWT)
@@ -82,5 +84,10 @@ export class AuthController {
   async resendVerification(@Body() body: ResendMailVerificationDTO) {
     await this.authService.resendVerification(body);
     return jsonResponse([]);
+  }
+
+  @Post('refresh')
+  async refresh(@Req() request: Request, @Body() body: RefreshDto) {
+    return jsonResponse(await this.oauthService.refresh(body, request));
   }
 }

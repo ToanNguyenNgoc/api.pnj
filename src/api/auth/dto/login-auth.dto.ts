@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 export class LoginDTO {
+  @IsOptional()
   @IsNotEmpty()
-  @IsEmail()
   @ApiProperty({ default: 'super_admin@gmail.com' })
   readonly email: string;
 
@@ -81,4 +81,10 @@ export class ResendMailVerificationDTO {
   @ApiProperty()
   @IsNotEmpty()
   recaptcha: string;
+}
+
+export class RefreshDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  refresh: string;
 }

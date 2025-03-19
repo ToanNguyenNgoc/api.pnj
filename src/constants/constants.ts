@@ -6,10 +6,15 @@ export const SWAGGER_TAG = {
   User: 'User',
   RolePermission: 'Role & Permission',
   Admin: 'Admin',
+  AdminOrder: 'AdminOrder',
   Media: 'Media',
   Province: 'Province',
   UserAddresses: 'UserAddresses',
   PaymentMethod: 'PaymentMethod',
+  Orders: 'Orders',
+  Organizations: 'Organizations',
+  Blog: 'Blog',
+  BlogCategory: 'BlogCategory',
 };
 export const NAME = {
   JWT: 'json_web_token',

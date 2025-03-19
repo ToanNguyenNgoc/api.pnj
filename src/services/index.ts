@@ -5,3 +5,5 @@ export * from './oauth/oauth.service';
 
 export * from './get-media/get-media.module';
 export * from './get-media/get-media.service';
+
+export * from './vnpay/vnpay.service';

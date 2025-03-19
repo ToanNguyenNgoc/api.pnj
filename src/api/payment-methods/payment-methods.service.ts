@@ -18,7 +18,7 @@ export class PaymentMethodsService extends BaseService<PaymentMethod> {
   }
 
   findAll() {
-    return this.paginate({});
+    return this.paginate({}, { order: { id: 'ASC' } });
   }
 
   findOne(id: number) {

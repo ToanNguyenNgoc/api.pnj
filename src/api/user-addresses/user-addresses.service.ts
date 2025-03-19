@@ -27,9 +27,9 @@ export class UserAddressesService extends BaseService<UserAddress> {
     const address = await this.createData(UserAddress, {
       ...body,
       user,
-      province: [province],
-      district: [district],
-      ward: [ward],
+      province,
+      district,
+      ward,
       is_default: addressCount === 0 ? true : false,
     });
     delete address.context.user;
@@ -71,13 +71,13 @@ export class UserAddressesService extends BaseService<UserAddress> {
       consignee_s_name: body.consignee_s_name,
       consignee_s_telephone: body.consignee_s_telephone,
       province: body.province_code
-        ? [await this.provinceHelper.onProvince(body.province_code)]
+        ? await this.provinceHelper.onProvince(body.province_code)
         : undefined,
       district: body.district_code
-        ? [await this.provinceHelper.onDistrict(body.district_code)]
+        ? await this.provinceHelper.onDistrict(body.district_code)
         : undefined,
       ward: body.ward_code
-        ? [await this.provinceHelper.onWard(body.ward_code)]
+        ? await this.provinceHelper.onWard(body.ward_code)
         : undefined,
     });
   }

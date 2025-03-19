@@ -37,7 +37,7 @@ export class BaseService<T> {
         total: total,
         total_page: Math.ceil(total / limit),
         prev_page: page - 1 > 0 ? page - 1 : 0,
-        current_page: page,
+        current_page: Number(page || 1),
         next_page:
           page + 1 > Math.ceil(total / limit)
             ? Math.ceil(total / limit)
@@ -78,7 +78,7 @@ export class BaseService<T> {
     return {
       statusCode: 200,
       message: '',
-      context: await this.repository.save(data as any),
+      context: (await this.repository.save(data as any)) as T,
     };
   }
   async findAndUpdate<T extends Record<string, any>>(
@@ -120,6 +120,10 @@ export class BaseService<T> {
   getSort(sort?: string) {
     if (!sort) return undefined;
     return { [sort.replace('-', '')]: sort.includes('-') ? 'DESC' : 'ASC' };
+  }
+  getBoolean(val?: any) {
+    if (!val) return;
+    return val === 'false' ? false : true;
   }
   getIncludes(key: string, relations?: string) {
     if (!relations) return undefined;

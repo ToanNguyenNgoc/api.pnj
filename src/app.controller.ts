@@ -8,7 +8,7 @@ export class AppController {
 
   @ApiExcludeEndpoint()
   @Get()
-  @Render('welcome')
+  @Render('cat')
   getHello(): string {
     return this.appService.getHello();
   }

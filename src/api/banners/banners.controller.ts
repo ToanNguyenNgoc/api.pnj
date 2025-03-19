@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { BannersService } from './banners.service';
 import { CreateBannerDto } from './dto/create-banner.dto';
@@ -15,7 +16,18 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { NAME, SWAGGER_TAG } from 'src/constants';
 import { OAuthGuard, RoleGuard } from 'src/middlewares';
 import { Roles } from 'src/decorators';
+import { jsonResponse } from 'src/commons';
+import { Banner } from './entities';
+import { QrBanner } from './dto';
 
+@Controller('banners-types')
+@ApiTags(SWAGGER_TAG.Banner)
+export class BannersTypesController {
+  @Get()
+  findAll() {
+    return jsonResponse(Object.values(Banner.TYPE));
+  }
+}
 @Controller('banners')
 @ApiTags(SWAGGER_TAG.Banner)
 export class BannersController {
@@ -30,8 +42,8 @@ export class BannersController {
   }
 
   @Get()
-  findAll() {
-    return this.bannersService.findAll();
+  findAll(@Query() qr: QrBanner) {
+    return this.bannersService.findAll(qr);
   }
 
   @Get(':id')
@@ -40,11 +52,17 @@ export class BannersController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth(NAME.JWT)
+  @UseGuards(OAuthGuard, RoleGuard)
+  @Roles('.banners.:id.patch')
   update(@Param('id') id: string, @Body() updateBannerDto: UpdateBannerDto) {
     return this.bannersService.update(+id, updateBannerDto);
   }
 
   @Delete(':id')
+  @ApiBearerAuth(NAME.JWT)
+  @UseGuards(OAuthGuard, RoleGuard)
+  @Roles('.banners.:id.delete')
   remove(@Param('id') id: string) {
     return this.bannersService.remove(+id);
   }

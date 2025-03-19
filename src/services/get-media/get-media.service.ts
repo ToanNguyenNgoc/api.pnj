@@ -10,7 +10,7 @@ export class GetMediaService {
     private readonly mediaRepo: Repository<Media>,
   ) {}
   async getOne(media_id: number) {
-    if (!media_id) return null;
+    if (!media_id) return undefined;
     const media = await this.mediaRepo.findOne({ where: { id: media_id } });
     if (!media) throw new NotFoundException('Media not found');
     return media;

@@ -3,7 +3,6 @@ import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
 
 export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -23,16 +22,3 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
     };
   },
 };
-
-const dataSource = new DataSource({
-  type: 'mysql',
-  host: process.env.TYPEORM_HOST,
-  port: parseInt(process.env.TYPEORM_PORT, 10),
-  username: process.env.TYPEORM_USERNAME,
-  password: process.env.TYPEORM_PASSWORD,
-  database: process.env.TYPEORM_DATABASE,
-  entities: [__dirname + '/../**/*.entity.{js,ts}'],
-  synchronize: true,
-  logging: true,
-});
-export default dataSource;

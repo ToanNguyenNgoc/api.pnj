@@ -1,5 +1,8 @@
+import { Banner } from 'src/api/banners/entities';
+import { Blog } from 'src/api/blogs/entities';
+import { Organization } from 'src/api/organizations/entities';
 import { BaseEntity } from 'src/commons';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity('tb_media')
 export class Media extends BaseEntity {
@@ -17,4 +20,17 @@ export class Media extends BaseEntity {
 
   @Column({ nullable: true })
   original_url: string;
+
+  //
+  @OneToMany(() => Organization, (organization) => organization.media)
+  organizations: Organization[];
+
+  @OneToMany(() => Banner, (banner) => banner.media)
+  banners: Banner[];
+
+  @OneToMany(() => Banner, (banner) => banner.thumbnailMedia)
+  bannersThumbnail: Banner[];
+
+  @OneToMany(() => Blog, (blog) => blog.media)
+  blogs: Blog[];
 }

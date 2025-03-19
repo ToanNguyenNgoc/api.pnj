@@ -68,7 +68,7 @@ export class AdminService {
     }
     PaymentMethod.toMethodArray().forEach(async (item) => {
       await this.paymentMethodRepo.upsert(
-        { name: item.name, method: item.method },
+        { name: item.name, method: item.key, bank_code: item.bank_code },
         ['method'],
       );
     });

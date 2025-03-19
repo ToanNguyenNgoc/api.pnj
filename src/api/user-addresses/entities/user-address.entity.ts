@@ -1,7 +1,8 @@
+import { OrderDelivery } from 'src/api/orders/entities';
 import { District, Province, Ward } from 'src/api/provinces/entities';
 import { User } from 'src/api/users/entities/user.entity';
 import { BaseEntity } from 'src/commons';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity({ name: 'tb_user_address' })
 export class UserAddress extends BaseEntity {
@@ -23,21 +24,24 @@ export class UserAddress extends BaseEntity {
   @Column({ nullable: true })
   consignee_s_telephone: string;
 
-  @ManyToMany(() => Province)
-  @JoinTable()
-  province: Province[];
+  @ManyToOne(() => Province, (province) => province.userAddresses)
+  @JoinColumn({ name: 'province_code' })
+  province: Province;
 
-  @ManyToMany(() => District)
-  @JoinTable()
-  district: District[];
+  @ManyToOne(() => District, (district) => district.userAddresses)
+  @JoinColumn({ name: 'district_code' })
+  district: District;
 
-  @ManyToMany(() => Ward)
-  @JoinTable()
-  ward: Ward[];
+  @ManyToOne(() => Ward, (ward) => ward.userAddresses)
+  @JoinColumn({ name: 'ward_code' })
+  ward: Ward;
 
   @Column({ nullable: true })
   lat: number;
 
   @Column({ nullable: true })
   long: number;
+
+  @OneToMany(() => OrderDelivery, (orderDelivery) => orderDelivery.userAddress)
+  orderDeliveries: OrderDelivery[];
 }

@@ -3,6 +3,8 @@ import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { ProductMedia } from './product.media.entity';
 import { ProductItem } from './product.item.entity';
 import { Category } from 'src/api/categories/entities';
+import { OrderItem } from 'src/api/orders/entities';
+import { Banner } from 'src/api/banners/entities';
 
 @Entity('tb_product')
 export class Product extends BaseEntity {
@@ -35,4 +37,12 @@ export class Product extends BaseEntity {
 
   @Column({ nullable: true, default: 0 })
   quantity: number;
+
+  //Relationship
+
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
+  orderItems: OrderItem[];
+
+  @OneToMany(() => Banner, (banner) => banner.product)
+  banners: Banner[];
 }

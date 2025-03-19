@@ -15,6 +15,7 @@ import {
 import { Exclude } from 'class-transformer';
 import { Media } from 'src/api/media/entities';
 import { UserAddress } from 'src/api/user-addresses/entities';
+import { Order } from 'src/api/orders/entities';
 
 @Entity({ name: 'tb_user' })
 export class User {
@@ -76,15 +77,18 @@ export class User {
   @JoinColumn()
   media: Media;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt?: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt?: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date;
 
   @OneToMany(() => UserAddress, (address) => address.user)
   addresses: UserAddress[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 }
