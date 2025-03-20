@@ -12,6 +12,7 @@ type MailOptions = {
   email: string;
   template: string;
   fullname?: string;
+  otp?: string;
 };
 
 @Processor(QUEUE_NAME.send_mail)
@@ -53,6 +54,12 @@ export class SendMailConsumer {
       subject: 'SHADOW - WELCOME',
     };
   }
+  withOtpMail(email: string, otp: string) {
+    return {
+      data: { email, otp },
+      subject: 'SHADOW - FORGOT',
+    };
+  }
   async sendMail(options: MailOptions) {
     const { email, template } = options;
     console.log('Run send mail:', email);
@@ -67,6 +74,11 @@ export class SendMailConsumer {
       const welcome = this.withWelcome(email, options.fullname || '');
       data = welcome.data;
       subject = welcome.subject;
+    }
+    if (template === 'otp-mail') {
+      const otpData = this.withOtpMail(email, options.otp || '');
+      data = otpData.data;
+      subject = otpData.subject;
     }
     const htmlContent = await this.compileTemplate(template, data);
     try {

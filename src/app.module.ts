@@ -20,6 +20,7 @@ import { BullModule } from '@nestjs/bull';
     }),
     ApiModule,
     JwtConfigModule,
+    // SchedulesModules,
   ],
   controllers: [AppController],
   providers: [AppService],

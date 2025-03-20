@@ -14,6 +14,7 @@
   ".auth.verification.post": ".auth.verification.post",
   ".auth.verification-resend.post": ".auth.verification-resend.post",
   ".auth.refresh.post": ".auth.refresh.post",
+  ".auth.forgot-password.post": ".auth.forgot-password.post",
   ".users.post": ".users.post",
   ".users.get": ".users.get",
   ".users.:id.get": ".users.:id.get",

@@ -8,6 +8,7 @@ import { User } from '../users/entities/user.entity';
 import { Repository } from 'typeorm';
 import {
   ChangePasswordDTO,
+  ForgotDto,
   RegisterProfileDTO,
   ResendMailVerificationDTO,
   UpdateProfileDTO,
@@ -83,17 +84,21 @@ export class AuthService extends BaseService<User> {
   }
   async resendVerification(body: ResendMailVerificationDTO) {
     const user = await this.userRepo.findOne({ where: { email: body.email } });
-    // if (!user) throw new BadRequestException('Email not found');
-    // if (user.active) throw new BadRequestException('User has been verified');
-    // await this.sendMail.add(
-    //   { email: body.email, template: 'verification-register' },
-    //   { delay: 1000 },
-    // );
-    await this.sendMail.add({
-      email: user.email,
-      fullname: user.fullname,
-      template: 'welcome',
-    });
+    if (!user) throw new BadRequestException('Email not found');
+    if (user.active) throw new BadRequestException('User has been verified');
+    await this.sendMail.add(
+      { email: body.email, template: 'verification-register' },
+      { delay: 1000 },
+    );
+    return;
+  }
+  async forgotPassword(body: ForgotDto) {
+    const user = await this.userRepo.findOne({ where: { email: body.email } });
+    if (!user) throw new BadRequestException('Email not found');
+    await this.sendMail.add(
+      { email: body.email, otp: '12345', template: 'otp-mail' },
+      { delay: 1000 },
+    );
     return;
   }
 }

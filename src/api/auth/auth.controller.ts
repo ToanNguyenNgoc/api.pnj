@@ -13,6 +13,7 @@ import { NAME, SWAGGER_TAG } from 'src/constants';
 import { OAthService } from 'src/services';
 import {
   ChangePasswordDTO,
+  ForgotDto,
   LoginDTO,
   RefreshDto,
   RegisterProfileDTO,
@@ -89,5 +90,9 @@ export class AuthController {
   @Post('refresh')
   async refresh(@Req() request: Request, @Body() body: RefreshDto) {
     return jsonResponse(await this.oauthService.refresh(body, request));
+  }
+  @Post('forgot-password')
+  forgotPassword(@Body() body: ForgotDto) {
+    return this.authService.forgotPassword(body);
   }
 }

@@ -88,3 +88,21 @@ export class RefreshDto {
   @IsNotEmpty()
   refresh: string;
 }
+
+export class ForgotDto {
+  @ApiProperty({ example: 'string@gmail.com' })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty()
+  @IsOptional()
+  opt: string;
+
+  @ApiProperty()
+  @IsOptional()
+  password: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  recaptcha: string;
+}

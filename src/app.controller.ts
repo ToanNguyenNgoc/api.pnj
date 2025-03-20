@@ -8,7 +8,7 @@ export class AppController {
 
   @ApiExcludeEndpoint()
   @Get()
-  @Render('cat')
+  @Render('otp-mail')
   getHello(): string {
     return this.appService.getHello();
   }
