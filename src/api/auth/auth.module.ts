@@ -7,10 +7,11 @@ import { Media } from '../media/entities';
 import { SendMailConsumer } from 'src/jobs';
 import { BullModule } from '@nestjs/bull';
 import { QUEUE_NAME } from 'src/constants';
+import { Otp } from './entities';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Media]),
+    TypeOrmModule.forFeature([User, Media, Otp]),
     BullModule.registerQueue({ name: QUEUE_NAME.send_mail }),
   ],
   controllers: [AuthController],

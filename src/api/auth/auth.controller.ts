@@ -74,13 +74,14 @@ export class AuthController {
     return this.authService.register(body);
   }
 
+  @ApiExcludeEndpoint()
   @Post('verification')
   async verification(@Body() body: VerificationRegisterDTO) {
     await this.authService.verification(body);
     return jsonResponse([]);
   }
 
-  // @ApiExcludeEndpoint()
+  @ApiExcludeEndpoint()
   @Post('verification-resend')
   async resendVerification(@Body() body: ResendMailVerificationDTO) {
     await this.authService.resendVerification(body);

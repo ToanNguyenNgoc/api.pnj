@@ -96,7 +96,7 @@ export class ForgotDto {
 
   @ApiProperty()
   @IsOptional()
-  opt: string;
+  otp: string;
 
   @ApiProperty()
   @IsOptional()

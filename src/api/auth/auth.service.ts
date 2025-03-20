@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import {
   ChangePasswordDTO,
   ForgotDto,
@@ -19,6 +21,10 @@ import { HashHelper } from 'src/helpers';
 import { InjectQueue } from '@nestjs/bull';
 import { QUEUE_NAME } from 'src/constants';
 import { Queue } from 'bull';
+import { random } from 'src/utils';
+import { Otp } from './entities';
+import moment from 'moment';
+import { jsonResponse } from 'src/commons';
 
 @Injectable()
 export class AuthService extends BaseService<User> {
@@ -26,6 +32,8 @@ export class AuthService extends BaseService<User> {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+    @InjectRepository(Otp)
+    private readonly otpRepo: Repository<Otp>,
     private readonly getMediaService: GetMediaService,
     private readonly oauthService: OAthService,
     @InjectQueue(QUEUE_NAME.send_mail)
@@ -93,12 +101,36 @@ export class AuthService extends BaseService<User> {
     return;
   }
   async forgotPassword(body: ForgotDto) {
-    const user = await this.userRepo.findOne({ where: { email: body.email } });
-    if (!user) throw new BadRequestException('Email not found');
-    await this.sendMail.add(
-      { email: body.email, otp: '12345', template: 'otp-mail' },
-      { delay: 1000 },
-    );
-    return;
+    if (!body.otp && !body.password) {
+      const user = await this.userRepo.findOne({
+        where: { email: body.email, active: true },
+      });
+      if (!user) throw new BadRequestException('Email not found');
+      const otpCode = random();
+      const otp = new Otp();
+      otp.code = otpCode;
+      otp.email = body.email;
+      otp.expired_at = moment().add('minutes', 5).toDate();
+      await this.otpRepo.save(otp);
+      await this.sendMail.add(
+        { email: body.email, otp: otpCode, template: 'otp-mail' },
+        { delay: 1000 },
+      );
+      return jsonResponse({ message: 'Send success' });
+    }
+    const otpDetail = await this.otpRepo.findOne({
+      where: { code: body.otp, expired_at: MoreThan(new Date()) },
+    });
+    if (!otpDetail) throw new NotFoundException('OTP code is wrong');
+    await this.userRepo
+      .createQueryBuilder('tb_user')
+      .where({ email: otpDetail.email, active: true })
+      .update(User)
+      .set({
+        password: await this.hashHelper.hash(body.password),
+      })
+      .execute();
+    await this.otpRepo.delete(otpDetail.id);
+    return jsonResponse({ message: 'Update success' });
   }
 }
