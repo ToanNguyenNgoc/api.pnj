@@ -9,6 +9,10 @@ export class LoginDTO {
   @IsNotEmpty()
   @ApiProperty({ default: '111111' })
   readonly password: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  recaptcha: string;
 }
 export class RegisterProfileDTO {
   @ApiProperty()

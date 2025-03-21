@@ -7,6 +7,7 @@ import { typeOrmAsyncConfig } from 'database/data-source';
 import { ApiModule } from './api/api.module';
 import { JwtConfigModule } from './commons';
 import { BullModule } from '@nestjs/bull';
+// import { SchedulesModules } from './schedules/schedules.module';
 
 @Module({
   imports: [

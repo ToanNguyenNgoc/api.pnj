@@ -22,7 +22,7 @@ import {
   VerificationRegisterDTO,
 } from './dto';
 import { jsonResponse } from 'src/commons';
-import { OAuthGuard } from 'src/middlewares';
+import { OAuthGuard, ReCaptchaGuard } from 'src/middlewares';
 import { RequestHeaderType } from 'src/types';
 import { User } from '../users/entities/user.entity';
 import { Request } from 'express';
@@ -36,6 +36,7 @@ export class AuthController {
   ) {}
 
   @Post('login')
+  @UseGuards(ReCaptchaGuard)
   async login(@Req() request: Request, @Body() body: LoginDTO) {
     return jsonResponse(await this.oauthService.login(body, request));
   }
