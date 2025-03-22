@@ -15,6 +15,7 @@ export const SWAGGER_TAG = {
   Organizations: 'Organizations',
   Blog: 'Blog',
   BlogCategory: 'BlogCategory',
+  Brand: 'Brand',
 };
 export const NAME = {
   JWT: 'json_web_token',

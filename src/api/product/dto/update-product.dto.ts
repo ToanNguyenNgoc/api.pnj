@@ -47,6 +47,11 @@ export class UpdateProductDto {
 
   @ApiProperty()
   @IsOptional()
+  @IsNumber()
+  brand_id: number;
+
+  @ApiProperty()
+  @IsOptional()
   name: string;
 
   @ApiProperty()

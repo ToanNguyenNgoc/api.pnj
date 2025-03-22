@@ -22,6 +22,7 @@ import { PaymentGatewaysModule } from './payment-gateways/payment-gateways.modul
 import { AdminOrdersModule } from './admin-orders/admin-orders.module';
 import { BlogsModule } from './blogs/blogs.module';
 import { BlogCategoriesModule } from './blog-categories/blog-categories.module';
+import { BrandsModule } from './brands/brands.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { BlogCategoriesModule } from './blog-categories/blog-categories.module';
     AuthModule,
     UsersModule,
     OrganizationsModule,
+    BrandsModule,
     BannersModule,
     CategoriesModule,
     BlogCategoriesModule,

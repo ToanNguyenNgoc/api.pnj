@@ -1,5 +1,6 @@
 import { Banner } from 'src/api/banners/entities';
 import { Blog } from 'src/api/blogs/entities';
+import { Brand } from 'src/api/brands/entities';
 import { Organization } from 'src/api/organizations/entities';
 import { BaseEntity } from 'src/commons';
 import { Column, Entity, OneToMany } from 'typeorm';
@@ -33,4 +34,7 @@ export class Media extends BaseEntity {
 
   @OneToMany(() => Blog, (blog) => blog.media)
   blogs: Blog[];
+
+  @OneToMany(() => Brand, (brand) => brand.media)
+  brands: Brand[];
 }

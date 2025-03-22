@@ -31,6 +31,9 @@ export class CreateProductDto {
   category_id: number;
 
   @ApiProperty()
+  brand_id: number;
+
+  @ApiProperty()
   name: string;
 
   @ApiProperty()

@@ -11,6 +11,7 @@ import { BaseService, GetMediaService } from 'src/services';
 import { slugify } from 'src/utils';
 import { QrProductDto } from './dto';
 import { Category } from '../categories/entities';
+import { BrandsService } from '../brands/brands.service';
 
 @Injectable()
 export class ProductService extends BaseService<Product> {
@@ -24,6 +25,7 @@ export class ProductService extends BaseService<Product> {
     @InjectRepository(ProductItem)
     private readonly productItemRepo: Repository<ProductItem>,
     private readonly mediaService: GetMediaService,
+    private readonly brandService: BrandsService,
   ) {
     super(productRepo);
   }
@@ -35,6 +37,7 @@ export class ProductService extends BaseService<Product> {
       content: createProductDto.content,
       name_slugify: slugify(createProductDto.name),
       category: await this.onCategory(createProductDto.category_id),
+      brand: await this.brandService.onBrand(createProductDto.brand_id),
       price: createProductDto.price || firstItem?.price || 0,
       special_price:
         createProductDto.special_price || firstItem?.special_price || 0,
@@ -47,10 +50,16 @@ export class ProductService extends BaseService<Product> {
 
   async findAll(query: QrProductDto) {
     return this.paginate(query, {
-      where: this.getFilter({
+      where: {
         name: this.getLike(query.search),
-        active: query.active,
-      }),
+        category: { id: query.category_id },
+        brand: { id: query.brand_id },
+        active: this.getBoolean(query.active),
+        special_price: this.getRange(
+          query.min_special_price,
+          query.max_special_price,
+        ),
+      },
       order: this.getSort(query?.sort),
       relations: {
         medias: this.getIncludes('medias', query.includes)
@@ -58,6 +67,7 @@ export class ProductService extends BaseService<Product> {
           : false,
         items: this.getIncludes('items', query.includes),
         category: this.getIncludes('category', query.includes),
+        brand: this.getIncludes('brand', query.includes),
       },
     });
   }
@@ -67,7 +77,12 @@ export class ProductService extends BaseService<Product> {
       id,
       { throwNotFound: true, allowSlugify: true },
       {
-        relations: { medias: { media: true }, items: true, category: true },
+        relations: {
+          medias: { media: true },
+          items: true,
+          category: true,
+          brand: { media: true },
+        },
       },
     );
   }
@@ -78,6 +93,7 @@ export class ProductService extends BaseService<Product> {
       content: updateProductDto.content,
       active: updateProductDto.active,
       category: await this.onCategory(updateProductDto.category_id),
+      brand: await this.brandService.onBrand(updateProductDto.brand_id),
       price: updateProductDto.price,
       special_price: updateProductDto.special_price,
       quantity: updateProductDto.quantity,

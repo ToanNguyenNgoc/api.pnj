@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, mixin, NotFoundException } from '@nestjs/common';
 import { User } from 'src/api/users/entities/user.entity';
 import { BaseQuery } from 'src/commons';
 import {
+  And,
   FindManyOptions,
   FindOneOptions,
   FindOptionsOrder,
+  LessThanOrEqual,
   Like,
+  MoreThanOrEqual,
   Repository,
 } from 'typeorm';
 
@@ -128,5 +131,9 @@ export class BaseService<T> {
   getIncludes(key: string, relations?: string) {
     if (!relations) return undefined;
     return relations.split('|').includes(key);
+  }
+  getRange(min?: number, max?: number) {
+    if (!min || !max) return undefined;
+    return And(MoreThanOrEqual(min), LessThanOrEqual(max));
   }
 }

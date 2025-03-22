@@ -71,6 +71,7 @@ export class AuthController {
   }
 
   @Post('register')
+  @UseGuards(ReCaptchaGuard)
   async register(@Body() body: RegisterProfileDTO) {
     return this.authService.register(body);
   }
@@ -94,6 +95,7 @@ export class AuthController {
     return jsonResponse(await this.oauthService.refresh(body, request));
   }
   @Post('forgot-password')
+  @UseGuards(ReCaptchaGuard)
   forgotPassword(@Body() body: ForgotDto) {
     return this.authService.forgotPassword(body);
   }

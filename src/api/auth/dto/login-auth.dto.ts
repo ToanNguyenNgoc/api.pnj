@@ -35,6 +35,10 @@ export class RegisterProfileDTO {
   @IsOptional()
   @IsBoolean()
   gender: boolean;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  recaptcha: string;
 }
 
 export class UpdateProfileDTO {
