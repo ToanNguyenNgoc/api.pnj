@@ -8,6 +8,7 @@
   "..get": "..get",
   ".auth.login.post": ".auth.login.post",
   ".auth.profile.get": ".auth.profile.get",
+  ".auth.roles.get": ".auth.roles.get",
   ".auth.profile.put": ".auth.profile.put",
   ".auth.change-password.post": ".auth.change-password.post",
   ".auth.register.post": ".auth.register.post",

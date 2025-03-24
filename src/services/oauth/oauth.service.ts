@@ -93,9 +93,6 @@ export class OAthService {
       where: { id },
       relations: {
         media: true,
-        roles: {
-          permissions: true,
-        },
       },
     });
     if (!user) throw new NotFoundException('User not found');

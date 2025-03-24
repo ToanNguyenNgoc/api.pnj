@@ -47,6 +47,13 @@ export class AuthController {
     return jsonResponse(await this.oauthService.onUser(req.user.id));
   }
 
+  @Get('roles')
+  @ApiBearerAuth(NAME.JWT)
+  @UseGuards(OAuthGuard)
+  async roles(@Req() req: RequestHeaderType<User>) {
+    return jsonResponse(await this.authService.roles(req.user.id));
+  }
+
   @Put('profile')
   @ApiBearerAuth(NAME.JWT)
   @UseGuards(OAuthGuard)

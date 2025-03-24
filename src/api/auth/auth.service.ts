@@ -133,4 +133,11 @@ export class AuthService extends BaseService<User> {
     await this.otpRepo.delete(otpDetail.id);
     return jsonResponse({ message: 'Update success' });
   }
+  async roles(user_id: number) {
+    const user = await this.userRepo.findOne({
+      where: { id: user_id },
+      relations: { roles: { permissions: true } },
+    });
+    return user.roles;
+  }
 }
