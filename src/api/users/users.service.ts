@@ -68,14 +68,14 @@ export class UsersService extends BaseService<User> {
     await this.oathService.validateMailExist(body.email);
     await this.oathService.validateTelephoneExist(body.telephone);
     const roles = await this.roleRepo.find({
-      where: { id: In(body.role_ids) },
+      where: { id: In(body.role_ids || []) },
     });
     const media = await this.getMediaService.getOne(body.media_id);
     return this.findAndUpdate<UpdateUserDto>(
       id,
       Object.assign(body, {
-        roles: roles,
-        media,
+        roles: body.role_ids ? roles : undefined,
+        media: media,
         password: body.password
           ? await this.hashHelper.hash(body.password)
           : undefined,
