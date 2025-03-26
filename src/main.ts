@@ -23,7 +23,9 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document, customOptions);
   await app.listen(process.env.APP_PORT || 4080);
   //ADD: permissions
-  await generatePermissions(app);
+  if (process.env.APP_MODE === 'develop') {
+    // await generatePermissions(app);
+  }
   //ADD: public
   app.useStaticAssets(join(__dirname, '..', 'public'));
   // Set views directory

@@ -20,6 +20,7 @@ export class CreateUserDto {
   telephone: string;
 
   @ApiProperty({ default: '2025-02-26' })
+  @IsOptional()
   @Matches(/^\d{4}-\d{2}-\d{2}/, {
     message: 'Date is must match YYYY-MM-DD',
   })

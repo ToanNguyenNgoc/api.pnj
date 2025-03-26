@@ -8,6 +8,7 @@ import { ApiModule } from './api/api.module';
 import { JwtConfigModule } from './commons';
 import { BullModule } from '@nestjs/bull';
 // import { SchedulesModules } from './schedules/schedules.module';
+import { ChatGateway } from './gateway/chat/chat.gateway';
 
 @Module({
   imports: [
@@ -24,6 +25,6 @@ import { BullModule } from '@nestjs/bull';
     // SchedulesModules,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}
