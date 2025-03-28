@@ -7,3 +7,4 @@ export * from './get-media/get-media.module';
 export * from './get-media/get-media.service';
 
 export * from './vnpay/vnpay.service';
+export * from './cache/cache.service';

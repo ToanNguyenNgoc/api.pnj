@@ -10,7 +10,7 @@ export class CreateMessageDto {
 
   @ApiProperty()
   @IsNumber()
-  topic_id: string;
+  topic_id: number;
 
   @ApiProperty()
   @IsOptional()

@@ -27,3 +27,6 @@ export const QUEUE_NAME = {
   instance_province: 'instance_province',
   province: 'province',
 };
+export const CACHE_KEY_NAME = {
+  user_online: 'user_online',
+};

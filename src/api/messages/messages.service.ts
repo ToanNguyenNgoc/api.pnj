@@ -1,14 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
-import { BaseService, GetMediaService } from 'src/services';
+import { BaseService, CacheService, GetMediaService } from 'src/services';
 import { Message } from './entities/message.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TopicsService } from '../topics/topics.service';
 import { User } from '../users/entities/user.entity';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 import { jsonResponse } from 'src/commons';
 
 @Injectable()
@@ -18,8 +16,7 @@ export class MessagesService extends BaseService<Message> {
     private readonly msgRepo: Repository<Message>,
     private readonly topicService: TopicsService,
     private readonly mediaService: GetMediaService,
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: Cache,
+    private readonly cacheService: CacheService,
   ) {
     super(msgRepo);
   }
@@ -29,19 +26,22 @@ export class MessagesService extends BaseService<Message> {
       body.topic_id,
     );
     const media = await this.mediaService.getOne(body.media_id);
-    return 'This action adds a new message';
+    return this.createData(Message, {
+      msg: body.msg,
+      media,
+      topic,
+      user: userAuth,
+    });
   }
 
   async findAll() {
-    const data = await this.cacheManager.get('TEST');
-    return jsonResponse(data);
+    return jsonResponse([]);
   }
   findOne(id: number) {
     return `This action returns a #${id} message`;
   }
 
   async update(id: number, updateMessageDto: UpdateMessageDto) {
-    await this.cacheManager.set('TEST', { id: 1, name: 'bear' });
     return `This action updates a #${id} message`;
   }
 

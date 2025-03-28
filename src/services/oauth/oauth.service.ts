@@ -92,7 +92,10 @@ export class OAthService {
         secret: process.env.JWT_SECRET_KEY,
       });
       const id = aesDecode(code.code);
-      user = await this.userRepo.findOne({ where: { id } });
+      user = await this.userRepo.findOne({
+        where: { id },
+        select: User.select,
+      });
     } catch (error) {}
     return user;
   }

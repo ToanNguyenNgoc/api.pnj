@@ -36,6 +36,13 @@ export class TopicsService extends BaseService<Topic> {
       .orderBy('tb_topic.updated_at', 'DESC');
     return this.paginateBuilder(qr, queryBuilder);
   }
+  async findAllTopicUser(user: User) {
+    const topics = await this.topicRepo.find({
+      where: { users: { id: user.id } },
+      select: { id: true },
+    });
+    return topics.map((i) => i.id);
+  }
 
   findOne(id: number) {
     return this.detail(
