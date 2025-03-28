@@ -30,3 +30,12 @@ export const QUEUE_NAME = {
 export const CACHE_KEY_NAME = {
   user_online: 'user_online',
 };
+export class WS_EVENT_NAME {
+  static create_topic = 'create_topic';
+  static recipient_user = 'recipient_user';
+  static receive_topic = 'receive_topic';
+  static join_all = 'join_all';
+  static join = 'join';
+  static message = 'message';
+  static typing = 'typing';
+}

@@ -15,7 +15,7 @@ import { MessagesService } from 'src/api/messages/messages.service';
 import { TopicsService } from 'src/api/topics/topics.service';
 import { User } from 'src/api/users/entities/user.entity';
 import { jsonResponse } from 'src/commons';
-import { CACHE_KEY_NAME } from 'src/constants';
+import { CACHE_KEY_NAME, WS_EVENT_NAME } from 'src/constants';
 import { CacheService, OAthService } from 'src/services';
 
 @WebSocketGateway({ cors: { origin: '*' } }) // Allows cross-origin requests
@@ -44,7 +44,10 @@ export class ChatGateway
     const user = await this.onAuth(client.handshake.headers.authorization);
     if (!user) return client.disconnect();
     await this.setUserOnline(user);
+    //Emit new topic joined from other user
+    client.join(`recipient_user.${user.id}`);
     console.log(`Client connected: ${client.id}`);
+    console.log(`Join recipient_user.${user.id}`);
   }
 
   async handleDisconnect(client: Socket) {
@@ -55,8 +58,36 @@ export class ChatGateway
     console.log(`Client disconnect: ${client.id}`);
     return;
   }
+  @SubscribeMessage(WS_EVENT_NAME.create_topic)
+  async handleCreateTopic(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    body: {
+      recipient_id: number;
+      group_name: string;
+      msg: string;
+      media_id: number;
+    },
+  ) {
+    if (!body.msg || !body.media_id) return;
+    const user = await this.onAuth(client.handshake.headers.authorization);
+    if (!user) return;
+    const userRecipient = await this.oathService.onUser(body.recipient_id);
+    const newTopic = await this.messageService.createMessageWithoutTopic(
+      user,
+      userRecipient,
+      body,
+    );
+    this.server
+      .to(`recipient_user.${user.id}`)
+      .emit(WS_EVENT_NAME.receive_topic, jsonResponse(newTopic));
+    this.server
+      .to(`recipient_user.${userRecipient.id}`)
+      .emit(WS_EVENT_NAME.receive_topic, jsonResponse(newTopic));
+    return;
+  }
 
-  @SubscribeMessage('join_all')
+  @SubscribeMessage(WS_EVENT_NAME.join_all)
   async handleJoinAll(
     @ConnectedSocket() client: Socket,
     @MessageBody() body: any,
@@ -69,11 +100,10 @@ export class ChatGateway
         console.log(`Join_all topic_id: ${id}`);
         client.join(String(id));
       });
-      console.log(await this.getUserOnline());
     } catch (error) {}
   }
 
-  @SubscribeMessage('join')
+  @SubscribeMessage(WS_EVENT_NAME.join)
   async handleJoin(
     @ConnectedSocket() client: Socket,
     @MessageBody() body: any,
@@ -86,7 +116,7 @@ export class ChatGateway
     } catch (error) {}
   }
 
-  @SubscribeMessage('message')
+  @SubscribeMessage(WS_EVENT_NAME.message)
   async handleMessage(
     @ConnectedSocket() client: Socket,
     @MessageBody() body: CreateMessageDto,
@@ -96,12 +126,26 @@ export class ChatGateway
       if (!user) return;
       this.server
         .to(String(body.topic_id))
-        .emit('message', jsonResponse({ ...body, user }));
+        .emit(WS_EVENT_NAME.message, jsonResponse({ ...body, user }));
+      this.server
+        .to(String(body.topic_id))
+        .emit(WS_EVENT_NAME.typing, jsonResponse({ user, is_typing: false }));
       await this.messageService.create(user, body);
     } catch (error) {}
     return;
   }
-
+  @SubscribeMessage(WS_EVENT_NAME.typing)
+  async handleType(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: { is_typing: boolean; topic_id: number },
+  ) {
+    const user = await this.onAuth(client.handshake.headers.authorization);
+    if (!user) return;
+    this.server
+      .to(String(body.topic_id))
+      .emit(WS_EVENT_NAME.typing, jsonResponse({ user, ...body }));
+  }
+  //
   async getUserOnline() {
     const users =
       (await this.cacheService.getData<User[]>(CACHE_KEY_NAME.user_online)) ||
