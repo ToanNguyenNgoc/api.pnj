@@ -7,24 +7,21 @@ import { typeOrmAsyncConfig } from 'database/data-source';
 import { ApiModule } from './api/api.module';
 import { JwtConfigModule } from './commons';
 import { BullModule } from '@nestjs/bull';
-// import { SchedulesModules } from './schedules/schedules.module';
-import { ChatGateway } from './gateway/chat/chat.gateway';
+import { ChatModule } from './gateway';
+import { CacheModule } from '@nestjs/cache-manager';
+import { bullConfig, cacheConfig } from './configs';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
-    BullModule.forRoot({
-      redis: {
-        host: process.env.REDIS_HOST,
-        port: Number(process.env.REDIS_PORT || 6379),
-      },
-    }),
+    BullModule.forRoot(bullConfig),
+    CacheModule.registerAsync(cacheConfig),
     ApiModule,
     JwtConfigModule,
-    // SchedulesModules,
+    ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService],
 })
 export class AppModule {}

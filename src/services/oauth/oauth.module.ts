@@ -8,7 +8,7 @@ import { Refresh } from 'src/api/auth/entities';
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([Role, Permission, User, Refresh])],
+  imports: [TypeOrmModule.forFeature([Role, Permission, User])],
   providers: [OAthService],
   exports: [OAthService],
 })

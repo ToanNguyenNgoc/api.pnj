@@ -93,5 +93,15 @@
   ".media.post": ".media.post",
   ".media.:imagename.get": ".media.:imagename.get",
   ".permissions.get": ".permissions.get",
-  ".payment-gateways.vnpay-notification.get": ".payment-gateways.vnpay-notification.get"
+  ".payment-gateways.vnpay-notification.get": ".payment-gateways.vnpay-notification.get",
+  ".topics.post": ".topics.post",
+  ".topics.get": ".topics.get",
+  ".topics.:id.get": ".topics.:id.get",
+  ".topics.:id.patch": ".topics.:id.patch",
+  ".topics.:id.delete": ".topics.:id.delete",
+  ".messages.post": ".messages.post",
+  ".messages.get": ".messages.get",
+  ".messages.:id.get": ".messages.:id.get",
+  ".messages.:id.patch": ".messages.:id.patch",
+  ".messages.:id.delete": ".messages.:id.delete"
 }

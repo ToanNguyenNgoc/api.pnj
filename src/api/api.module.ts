@@ -23,6 +23,8 @@ import { AdminOrdersModule } from './admin-orders/admin-orders.module';
 import { BlogsModule } from './blogs/blogs.module';
 import { BlogCategoriesModule } from './blog-categories/blog-categories.module';
 import { BrandsModule } from './brands/brands.module';
+import { TopicsModule } from './topics/topics.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { BrandsModule } from './brands/brands.module';
     MediaModule,
     PermissionsModule,
     PaymentGatewaysModule,
+    TopicsModule,
+    MessagesModule,
   ],
   providers: [AuthStrategy],
 })

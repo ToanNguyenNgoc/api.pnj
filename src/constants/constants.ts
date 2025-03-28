@@ -16,6 +16,7 @@ export const SWAGGER_TAG = {
   Blog: 'Blog',
   BlogCategory: 'BlogCategory',
   Brand: 'Brand',
+  Topic_Message: 'Topic & Message',
 };
 export const NAME = {
   JWT: 'json_web_token',

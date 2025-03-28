@@ -11,6 +11,7 @@ import {
   Like,
   MoreThanOrEqual,
   Repository,
+  SelectQueryBuilder,
 } from 'typeorm';
 
 interface DetailOptions {
@@ -32,6 +33,29 @@ export class BaseService<T> {
       take: limit,
     });
 
+    return {
+      statusCode: 200,
+      message: '',
+      context: {
+        data: data,
+        total: total,
+        total_page: Math.ceil(total / limit),
+        prev_page: page - 1 > 0 ? page - 1 : 0,
+        current_page: Number(page || 1),
+        next_page:
+          page + 1 > Math.ceil(total / limit)
+            ? Math.ceil(total / limit)
+            : page + 1,
+      },
+    };
+  }
+  async paginateBuilder<T>(qr: BaseQuery, queryBuilder: SelectQueryBuilder<T>) {
+    const page = qr.page || 1;
+    const limit = qr.limit || 15;
+    const [data, total] = await queryBuilder
+      .offset(page * limit - limit)
+      .limit(limit)
+      .getManyAndCount();
     return {
       statusCode: 200,
       message: '',

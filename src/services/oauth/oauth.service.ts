@@ -13,7 +13,6 @@ import { JwtService } from '@nestjs/jwt';
 import { aesDecode, aesEncode } from 'src/utils';
 import moment from 'moment';
 import { Request } from 'express';
-import { Refresh } from 'src/api/auth/entities';
 
 @Injectable()
 export class OAthService {
@@ -21,8 +20,6 @@ export class OAthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-    @InjectRepository(Refresh)
-    private readonly refreshRepo: Repository<Refresh>,
     private readonly jwtService: JwtService,
   ) {}
   async login(body: LoginDTO, request: Request) {
@@ -87,6 +84,17 @@ export class OAthService {
         secret: process.env.JWT_SECRET_KEY,
       },
     );
+  }
+  async onUserToken(token: string) {
+    let user: User;
+    try {
+      const code = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET_KEY,
+      });
+      const id = aesDecode(code.code);
+      user = await this.userRepo.findOne({ where: { id } });
+    } catch (error) {}
+    return user;
   }
   async onUser(id: number, withPassword = false) {
     const user = await this.userRepo.findOne({

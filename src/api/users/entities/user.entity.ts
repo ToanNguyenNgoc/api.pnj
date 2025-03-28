@@ -16,6 +16,7 @@ import { Exclude } from 'class-transformer';
 import { Media } from 'src/api/media/entities';
 import { UserAddress } from 'src/api/user-addresses/entities';
 import { Order } from 'src/api/orders/entities';
+import { Message } from 'src/api/messages/entities/message.entity';
 
 @Entity({ name: 'tb_user' })
 export class User {
@@ -86,9 +87,14 @@ export class User {
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date;
 
+  //Relationship
+
   @OneToMany(() => UserAddress, (address) => address.user)
   addresses: UserAddress[];
 
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
+
+  @OneToMany(() => Message, (message) => message.user)
+  messages: Message[];
 }
