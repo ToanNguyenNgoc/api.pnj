@@ -76,11 +76,11 @@ export class OAthService {
         .format('YYYY-MM-DD HH:mm:ss'),
     };
   }
-  createToken(user: User) {
+  createToken(user: User, expiresIn = process.env.JWT_EXPIRED_IN) {
     return this.jwtService.signAsync(
       { code: aesEncode(String(user.id)) },
       {
-        expiresIn: process.env.JWT_EXPIRED_IN,
+        expiresIn,
         secret: process.env.JWT_SECRET_KEY,
       },
     );

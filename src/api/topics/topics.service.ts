@@ -20,6 +20,19 @@ export class TopicsService extends BaseService<Topic> {
   }
   async create(user: User, body: CreateTopicDto) {
     const userRecipient = await this.onUser(body.recipient_id);
+    const prevTopic = await this.topicRepo
+      .createQueryBuilder('tb_topic')
+      .leftJoin('tb_topic.users', 'user')
+      .where('tb_topic.type = :type', { type: Topic.TYPE.DUOS })
+      .andWhere('user.id IN (:...userIds)', {
+        userIds: [user.id, userRecipient.id],
+      })
+      .groupBy('tb_topic.id')
+      .having('COUNT(user.id) = 2')
+      .getOne();
+    if (prevTopic) {
+      return this.findOne(prevTopic.id);
+    }
     return this.createData(Topic, {
       group_name: body.group_name,
       users: [user, userRecipient],
@@ -29,6 +42,7 @@ export class TopicsService extends BaseService<Topic> {
   async findAll(user: User, qr: QrTopic) {
     const queryBuilder = this.topicRepo
       .createQueryBuilder('tb_topic')
+      .where('tb_topic.msg IS NOT NULL')
       .innerJoin('tb_topic.users', 'user', 'user.id = :user_id')
       .leftJoin('tb_topic.users', 'all_user')
       .setParameter('user_id', user.id)

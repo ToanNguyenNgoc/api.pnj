@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -17,6 +18,7 @@ import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 import { NAME, SWAGGER_TAG } from 'src/constants';
 import { RequestHeaderType } from 'src/types';
 import { User } from '../users/entities/user.entity';
+import { QrMessage } from './dto/query-message.dto';
 
 @Controller('messages')
 @ApiTags(SWAGGER_TAG.Topic_Message)
@@ -34,8 +36,8 @@ export class MessagesController {
   }
 
   @Get()
-  findAll() {
-    return this.messagesService.findAll();
+  findAll(@Req() req: RequestHeaderType<User>, @Query() qr: QrMessage) {
+    return this.messagesService.findAll(req.user, qr);
   }
 
   @ApiExcludeEndpoint()

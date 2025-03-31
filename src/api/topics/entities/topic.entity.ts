@@ -5,6 +5,10 @@ import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 
 @Entity('tb_topic')
 export class Topic extends BaseEntity {
+  static TYPE = {
+    DUOS: 'DUOS',
+    MULTIPLE: 'MULTIPLE',
+  };
   static relations = ['users'];
   static sortable = ['createdAt', '-createdAt', 'id', '-id'];
 
@@ -17,4 +21,10 @@ export class Topic extends BaseEntity {
 
   @OneToMany(() => Message, (message) => message.user)
   messages: Message[];
+
+  @Column({ nullable: true, default: Topic.TYPE.DUOS })
+  type: string;
+
+  @Column({ nullable: true, length: 1000 })
+  msg: string;
 }

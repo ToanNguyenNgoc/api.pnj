@@ -76,7 +76,7 @@ export class BaseService<T> {
     id: any,
     options?: DetailOptions,
     queryOptions?: FindOneOptions<T>,
-  ) {
+  ): Promise<any> {
     const data = await this.repository.findOne({
       where: [
         { id },

@@ -6,6 +6,8 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity('tb_message')
 export class Message extends BaseEntity {
+  static sortable = ['createdAt', '-createdAt', 'id', '-id'];
+
   @Column({ length: 1000, nullable: true })
   msg: string;
 

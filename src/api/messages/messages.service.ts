@@ -7,8 +7,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TopicsService } from '../topics/topics.service';
 import { User } from '../users/entities/user.entity';
-import { jsonResponse } from 'src/commons';
 import { Topic } from '../topics/entities';
+import { QrMessage } from './dto/query-message.dto';
 
 @Injectable()
 export class MessagesService extends BaseService<Message> {
@@ -28,6 +28,7 @@ export class MessagesService extends BaseService<Message> {
       userAuth.id,
       body.topic_id,
     );
+    await this.topicRepo.save({ ...topic, msg: body.msg });
     const media = await this.mediaService.getOne(body.media_id);
     return this.createData(Message, {
       msg: body.msg,
@@ -40,20 +41,23 @@ export class MessagesService extends BaseService<Message> {
     userAuth: User,
     userRecipient: User,
     body: {
+      topic_id: number;
       recipient_id: number;
       group_name: string;
       msg: string;
       media_id: number;
     },
   ) {
-    const topic = new Topic();
-    topic.group_name = body.group_name;
-    topic.users = [userAuth, userRecipient];
-    const topicResponse = await this.topicRepo.save(topic);
+    const topicResponse = await this.topicService.create(userAuth, {
+      group_name: body.group_name,
+      recipient_id: body.recipient_id,
+    });
+    const topic = topicResponse.context;
+    await this.topicRepo.save({ ...topic, msg: body.msg });
 
     const message = new Message();
     message.msg = body.msg;
-    message.topic = topicResponse;
+    message.topic = topic;
     message.user = userAuth;
     message.media = await this.mediaService.getOne(body.media_id);
     const messageResponse = await this.msgRepo.save(message);
@@ -64,8 +68,15 @@ export class MessagesService extends BaseService<Message> {
     };
   }
 
-  async findAll() {
-    return jsonResponse([]);
+  async findAll(user: User, qr: QrMessage) {
+    return this.paginate(qr, {
+      where: {
+        topic: { id: qr.topic_id, users: { id: user.id } },
+      },
+      relations: { user: { media: true }, media: true },
+      select: { user: User.select },
+      order: this.getSort(qr.sort),
+    });
   }
   findOne(id: number) {
     return `This action returns a #${id} message`;
