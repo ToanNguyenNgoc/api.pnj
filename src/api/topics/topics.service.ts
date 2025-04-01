@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Topic } from './entities';
 import { Repository } from 'typeorm';
 import { QrTopic } from './dto/query-topic.dto';
+import { jsonResponse } from 'src/commons';
 
 @Injectable()
 export class TopicsService extends BaseService<Topic> {
@@ -36,6 +37,7 @@ export class TopicsService extends BaseService<Topic> {
     return this.createData(Topic, {
       group_name: body.group_name,
       users: [user, userRecipient],
+      msg: body.msg,
     });
   }
 
@@ -58,17 +60,21 @@ export class TopicsService extends BaseService<Topic> {
     return topics.map((i) => i.id);
   }
 
-  findOne(id: number) {
-    return this.detail(
-      id,
-      { throwNotFound: true },
-      {
-        relations: {
-          users: { media: true },
-        },
-        select: { users: User.select },
+  async onTopic(id: number, includeMessage = false) {
+    const topic = await this.topicRepo.findOne({
+      where: { id },
+      relations: {
+        users: { media: true },
+        messages: includeMessage,
       },
-    );
+      select: { users: User.select },
+    });
+    return topic;
+  }
+  async findOne(id: number) {
+    const topic = await this.onTopic(id);
+    if (!topic) throw new NotFoundException();
+    return jsonResponse(topic);
   }
 
   update(id: number, updateTopicDto: UpdateTopicDto) {

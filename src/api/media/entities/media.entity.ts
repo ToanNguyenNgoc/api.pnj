@@ -1,13 +1,14 @@
 import { Banner } from 'src/api/banners/entities';
 import { Blog } from 'src/api/blogs/entities';
 import { Brand } from 'src/api/brands/entities';
-import { Message } from 'src/api/messages/entities/message.entity';
 import { Organization } from 'src/api/organizations/entities';
 import { BaseEntity } from 'src/commons';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity('tb_media')
 export class Media extends BaseEntity {
+  static TYPE = { MEDIA: 'MEDIA' };
+
   @Column({ nullable: true })
   name: string;
 
@@ -38,7 +39,4 @@ export class Media extends BaseEntity {
 
   @OneToMany(() => Brand, (brand) => brand.media)
   brands: Brand[];
-
-  @OneToMany(() => Message, (message) => message.media)
-  messages: Message[];
 }

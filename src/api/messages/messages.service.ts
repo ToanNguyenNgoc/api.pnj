@@ -9,6 +9,7 @@ import { TopicsService } from '../topics/topics.service';
 import { User } from '../users/entities/user.entity';
 import { Topic } from '../topics/entities';
 import { QrMessage } from './dto/query-message.dto';
+import { Media } from '../media/entities';
 
 @Injectable()
 export class MessagesService extends BaseService<Message> {
@@ -28,13 +29,12 @@ export class MessagesService extends BaseService<Message> {
       userAuth.id,
       body.topic_id,
     );
-    await this.topicRepo.save({ ...topic, msg: body.msg });
-    const media = await this.mediaService.getOne(body.media_id);
+    await this.topicRepo.save({ ...topic, msg: body.msg || Media.TYPE.MEDIA });
     return this.createData(Message, {
       msg: body.msg,
-      media,
       topic,
       user: userAuth,
+      medias: await this.mediaService.getMultiple(body.media_ids),
     });
   }
   async createMessageWithoutTopic(
@@ -45,21 +45,21 @@ export class MessagesService extends BaseService<Message> {
       recipient_id: number;
       group_name: string;
       msg: string;
-      media_id: number;
+      media_ids?: number[];
     },
   ) {
     const topicResponse = await this.topicService.create(userAuth, {
       group_name: body.group_name,
       recipient_id: body.recipient_id,
+      msg: body.msg || Media.TYPE.MEDIA,
     });
     const topic = topicResponse.context;
-    await this.topicRepo.save({ ...topic, msg: body.msg });
 
     const message = new Message();
     message.msg = body.msg;
     message.topic = topic;
     message.user = userAuth;
-    message.media = await this.mediaService.getOne(body.media_id);
+    message.medias = await this.mediaService.getMultiple(body.media_ids);
     const messageResponse = await this.msgRepo.save(message);
 
     return {
@@ -73,7 +73,7 @@ export class MessagesService extends BaseService<Message> {
       where: {
         topic: { id: qr.topic_id, users: { id: user.id } },
       },
-      relations: { user: { media: true }, media: true },
+      relations: { user: { media: true }, medias: true },
       select: { user: User.select },
       order: this.getSort(qr.sort),
     });

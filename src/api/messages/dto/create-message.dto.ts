@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 import { IsNotHtml } from 'src/decorators';
 
 export class CreateMessageDto {
@@ -12,8 +12,9 @@ export class CreateMessageDto {
   @IsNumber()
   topic_id: number;
 
-  @ApiProperty()
+  @ApiProperty({ default: [] })
   @IsOptional()
-  @IsNumber()
-  media_id: number;
+  @IsArray()
+  @IsNumber({}, { each: true })
+  media_ids: number[];
 }

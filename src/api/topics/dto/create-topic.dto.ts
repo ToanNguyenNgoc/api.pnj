@@ -9,4 +9,8 @@ export class CreateTopicDto {
   @ApiProperty()
   @IsOptional()
   group_name: string;
+
+  @ApiProperty()
+  @IsOptional()
+  msg?: string;
 }

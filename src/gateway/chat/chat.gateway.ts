@@ -50,10 +50,7 @@ export class ChatGateway
       console.log(`Join_all topic_id: ${id}`);
       client.join(String(id));
     });
-    //Emit new topic joined from other user
-    client.join(`recipient_user.${user.id}`);
-    console.log(`Client connected: ${client.id}`);
-    console.log(`Join recipient_user.${user.id}`);
+    client.join(`message_global.${user.id}`);
   }
 
   async handleDisconnect(client: Socket) {
@@ -73,10 +70,10 @@ export class ChatGateway
       recipient_id: number;
       group_name: string;
       msg: string;
-      media_id: number;
+      media_ids?: number[];
     },
   ) {
-    if (!body.msg && !body.media_id) return;
+    if (!body.msg && !body.media_ids) return;
     const user = await this.onAuth(client.handshake.headers.authorization);
     if (!user) return;
     const userRecipient = await this.oathService.onUser(body.recipient_id);
@@ -138,8 +135,18 @@ export class ChatGateway
       this.server
         .to(String(body.topic_id))
         .emit(WS_EVENT_NAME.typing, jsonResponse({ user, is_typing: false }));
+      await this.handleMessageGlobal(body.topic_id, message);
     } catch (error) {}
     return;
+  }
+  async handleMessageGlobal(topic_id: number, messageContext: any) {
+    const topic = await this.topicService.onTopic(topic_id);
+    if (!topic) return;
+    topic.users.forEach((user) =>
+      this.server
+        .to(`message_global.${user.id}`)
+        .emit('message_global', messageContext),
+    );
   }
 
   @SubscribeMessage(WS_EVENT_NAME.typing)
