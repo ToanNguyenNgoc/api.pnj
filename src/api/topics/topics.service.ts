@@ -20,25 +20,65 @@ export class TopicsService extends BaseService<Topic> {
     super(topicRepo);
   }
   async create(user: User, body: CreateTopicDto) {
-    const userRecipient = await this.onUser(body.recipient_id);
-    const prevTopic = await this.topicRepo
-      .createQueryBuilder('tb_topic')
-      .leftJoin('tb_topic.users', 'user')
-      .where('tb_topic.type = :type', { type: Topic.TYPE.DUOS })
-      .andWhere('user.id IN (:...userIds)', {
-        userIds: [user.id, userRecipient.id],
-      })
-      .groupBy('tb_topic.id')
-      .having('COUNT(user.id) = 2')
-      .getOne();
-    if (prevTopic) {
-      return this.findOne(prevTopic.id);
-    }
-    return this.createData(Topic, {
-      group_name: body.group_name,
-      users: [user, userRecipient],
-      msg: body.msg,
+    const userAuth = await this.userRepo.findOne({
+      where: { id: user.id },
+      relations: { roles: true },
     });
+    if (userAuth.roles.length > 0) {
+      const userRecipient = await this.onUser(body.recipient_id);
+      const prevTopic = await this.topicRepo
+        .createQueryBuilder('tb_topic')
+        .leftJoin('tb_topic.users', 'user')
+        .where('tb_topic.type = :type', { type: Topic.TYPE.DUOS })
+        .andWhere('user.id IN (:...userIds)', {
+          userIds: [user.id, userRecipient.id],
+        })
+        .groupBy('tb_topic.id')
+        .having('COUNT(user.id) = 2')
+        .getOne();
+      if (prevTopic) {
+        return this.findOne(prevTopic.id);
+      }
+      return this.createData(Topic, {
+        group_name: body.group_name,
+        users: [user, userRecipient],
+        msg: body.msg,
+      });
+    } else {
+      //For customer sent from web client
+      const prevTopicCustomer = await this.topicRepo
+        .createQueryBuilder('tb_topic')
+        .leftJoin('tb_topic.users', 'owner')
+        .leftJoin('tb_topic.users', 'user')
+        .where('tb_topic.type = :type', { type: Topic.TYPE.MULTIPLE })
+        .andWhere('owner.id IN (:...userIds)', {
+          userIds: [userAuth.id],
+        })
+        .groupBy('tb_topic.id')
+        .having('COUNT(user.id) >= 2')
+        .getOne();
+      if (prevTopicCustomer) {
+        return this.findOne(prevTopicCustomer.id);
+      }
+      const usersHasRoleChat = await this.userRepo.find({
+        where: [
+          { roles: { name: User.SUPER_ADMIN } },
+          {
+            roles: {
+              permissions: {
+                name: '.topics.post',
+              },
+            },
+          },
+        ],
+      });
+      return this.createData(Topic, {
+        users: [userAuth, ...usersHasRoleChat],
+        owners: [userAuth],
+        msg: body.msg,
+        type: Topic.TYPE.MULTIPLE,
+      });
+    }
   }
 
   async findAll(user: User, qr: QrTopic) {
@@ -66,8 +106,9 @@ export class TopicsService extends BaseService<Topic> {
       relations: {
         users: { media: true },
         messages: includeMessage,
+        owners: { media: true },
       },
-      select: { users: User.select },
+      select: { users: User.select, owners: User.select },
     });
     return topic;
   }

@@ -10,10 +10,19 @@ import { BullModule } from '@nestjs/bull';
 import { QUEUE_NAME } from 'src/constants';
 import { AdminConsumer } from './admin.consumer';
 import { PaymentMethod } from '../payment-methods/entities';
+import { Topic } from '../topics/entities';
+import { Message } from '../messages/entities/message.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Role, Permission, User, PaymentMethod]),
+    TypeOrmModule.forFeature([
+      Role,
+      Permission,
+      User,
+      PaymentMethod,
+      Topic,
+      Message,
+    ]),
     BullModule.registerQueue({
       name: QUEUE_NAME.province,
     }),

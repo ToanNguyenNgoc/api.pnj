@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { BaseService, CacheService, GetMediaService } from 'src/services';
@@ -10,6 +10,8 @@ import { User } from '../users/entities/user.entity';
 import { Topic } from '../topics/entities';
 import { QrMessage } from './dto/query-message.dto';
 import { Media } from '../media/entities';
+import { base64encode } from 'src/utils';
+import { jsonResponse } from 'src/commons';
 
 @Injectable()
 export class MessagesService extends BaseService<Message> {
@@ -37,36 +39,6 @@ export class MessagesService extends BaseService<Message> {
       medias: await this.mediaService.getMultiple(body.media_ids),
     });
   }
-  async createMessageWithoutTopic(
-    userAuth: User,
-    userRecipient: User,
-    body: {
-      topic_id: number;
-      recipient_id: number;
-      group_name: string;
-      msg: string;
-      media_ids?: number[];
-    },
-  ) {
-    const topicResponse = await this.topicService.create(userAuth, {
-      group_name: body.group_name,
-      recipient_id: body.recipient_id,
-      msg: body.msg || Media.TYPE.MEDIA,
-    });
-    const topic = topicResponse.context;
-
-    const message = new Message();
-    message.msg = body.msg;
-    message.topic = topic;
-    message.user = userAuth;
-    message.medias = await this.mediaService.getMultiple(body.media_ids);
-    const messageResponse = await this.msgRepo.save(message);
-
-    return {
-      topicResponse,
-      messageResponse,
-    };
-  }
 
   async findAll(user: User, qr: QrMessage) {
     return this.paginate(qr, {
@@ -86,7 +58,15 @@ export class MessagesService extends BaseService<Message> {
     return `This action updates a #${id} message`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} message`;
+  async remove(user: User, id: number) {
+    const message = await this.msgRepo.findOne({
+      where: { id, user: { id: user.id } },
+    });
+    if (!message) throw new NotFoundException();
+    message.active = false;
+    message.msg = base64encode(message.msg || '');
+    message.medias = [];
+    await this.msgRepo.save(message);
+    return jsonResponse({}, 'Remove success');
   }
 }

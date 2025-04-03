@@ -95,6 +95,7 @@ export class OAthService {
       user = await this.userRepo.findOne({
         where: { id },
         select: User.select,
+        relations: { roles: true },
       });
     } catch (error) {}
     return user;
@@ -102,9 +103,7 @@ export class OAthService {
   async onUser(id: number, withPassword = false) {
     const user = await this.userRepo.findOne({
       where: { id },
-      relations: {
-        media: true,
-      },
+      relations: { media: true },
     });
     if (!user) throw new NotFoundException('User not found');
     if (!withPassword) {

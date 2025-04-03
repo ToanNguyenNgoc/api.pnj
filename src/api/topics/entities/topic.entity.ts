@@ -27,4 +27,8 @@ export class Topic extends BaseEntity {
 
   @Column({ nullable: true, length: 1000 })
   msg: string;
+
+  @ManyToMany(() => User)
+  @JoinTable()
+  owners: User[];
 }

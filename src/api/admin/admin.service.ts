@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from '../roles/entities/role.entity';
@@ -9,10 +8,9 @@ import { HashHelper } from '../../helpers';
 import { jsonResponse } from 'src/commons';
 import { Permission } from '../permissions/entities/permission.entity';
 import { permissionsArray } from 'src/commons';
-import { InjectQueue } from '@nestjs/bull';
-import { QUEUE_NAME } from 'src/constants';
-import { Queue } from 'bull';
 import { PaymentMethod } from '../payment-methods/entities';
+import { Topic } from '../topics/entities';
+import { Message } from '../messages/entities/message.entity';
 
 @Injectable()
 export class AdminService {
@@ -24,17 +22,13 @@ export class AdminService {
     private readonly permissionRepo: Repository<Permission>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-    @InjectQueue(QUEUE_NAME.province)
-    private readonly provinceQueue: Queue,
     @InjectRepository(PaymentMethod)
     private readonly paymentMethodRepo: Repository<PaymentMethod>,
+    @InjectRepository(Topic)
+    private readonly topicRepo: Repository<Topic>,
+    @InjectRepository(Message)
+    private readonly messageRepo: Repository<Message>,
   ) {}
-  async create(createAdminDto: CreateAdminDto) {
-    const data = { message: 'Instance province' };
-    const result = await this.provinceQueue.add(data, { delay: 3000 });
-    console.log(result);
-    return 'This action adds a new admin';
-  }
   async instance() {
     const role = await this.roleRepo.findOneBy({ name: User.SUPER_ADMIN });
     if (!role) {
@@ -75,19 +69,8 @@ export class AdminService {
     return jsonResponse([], 'Instance successfully');
   }
 
-  findAll() {
-    return `This action returns all admin`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} admin`;
-  }
-
-  update(id: number, updateAdminDto: UpdateAdminDto) {
-    return `This action updates a #${id} admin`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} admin`;
+  async clearMessage() {
+    await this.messageRepo.delete({});
+    await this.topicRepo.delete({});
   }
 }

@@ -52,9 +52,9 @@ export class MessagesController {
     return this.messagesService.update(+id, updateMessageDto);
   }
 
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.messagesService.remove(+id);
+  remove(@Req() req: RequestHeaderType<User>, @Param('id') id: string) {
+    return this.messagesService.remove(req.user, +id);
   }
 }

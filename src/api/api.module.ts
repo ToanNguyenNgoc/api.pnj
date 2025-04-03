@@ -44,7 +44,6 @@ import { MessagesModule } from './messages/messages.module';
     UserAddressesModule,
     PaymentMethodsModule,
     OrdersModule,
-    AdminModule,
     AdminOrdersModule,
     RolesModule,
     MediaModule,
@@ -52,6 +51,7 @@ import { MessagesModule } from './messages/messages.module';
     PaymentGatewaysModule,
     TopicsModule,
     MessagesModule,
+    AdminModule,
   ],
   providers: [AuthStrategy],
 })

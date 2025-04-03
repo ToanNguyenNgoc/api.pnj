@@ -31,6 +31,7 @@ export const CACHE_KEY_NAME = {
   user_online: 'user_online',
 };
 export class WS_EVENT_NAME {
+  static message_global = 'message_global';
   static create_topic = 'create_topic';
   static recipient_user = 'recipient_user';
   static receive_topic = 'receive_topic';

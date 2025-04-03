@@ -50,7 +50,7 @@ export class ChatGateway
       console.log(`Join_all topic_id: ${id}`);
       client.join(String(id));
     });
-    client.join(`message_global.${user.id}`);
+    client.join(`${WS_EVENT_NAME.message_global}.${user.id}`);
   }
 
   async handleDisconnect(client: Socket) {
@@ -59,35 +59,6 @@ export class ChatGateway
       await this.removeUserOnline(user);
     }
     console.log(`Client disconnect: ${client.id}`);
-    return;
-  }
-  @SubscribeMessage(WS_EVENT_NAME.create_topic)
-  async handleCreateTopic(
-    @ConnectedSocket() client: Socket,
-    @MessageBody()
-    body: {
-      topic_id: number;
-      recipient_id: number;
-      group_name: string;
-      msg: string;
-      media_ids?: number[];
-    },
-  ) {
-    if (!body.msg && !body.media_ids) return;
-    const user = await this.onAuth(client.handshake.headers.authorization);
-    if (!user) return;
-    const userRecipient = await this.oathService.onUser(body.recipient_id);
-    const newTopic = await this.messageService.createMessageWithoutTopic(
-      user,
-      userRecipient,
-      body,
-    );
-    this.server
-      .to(`recipient_user.${user.id}`)
-      .emit(WS_EVENT_NAME.receive_topic, jsonResponse(newTopic));
-    this.server
-      .to(`recipient_user.${userRecipient.id}`)
-      .emit(WS_EVENT_NAME.receive_topic, jsonResponse(newTopic));
     return;
   }
 
@@ -144,8 +115,8 @@ export class ChatGateway
     if (!topic) return;
     topic.users.forEach((user) =>
       this.server
-        .to(`message_global.${user.id}`)
-        .emit('message_global', messageContext),
+        .to(`${WS_EVENT_NAME.message_global}.${user.id}`)
+        .emit(WS_EVENT_NAME.message_global, messageContext),
     );
   }
 

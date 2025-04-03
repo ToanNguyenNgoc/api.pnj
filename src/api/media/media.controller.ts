@@ -33,7 +33,7 @@ import { OAuthGuard } from 'src/middlewares';
 const validatorsFile = new ParseFilePipe({
   validators: [
     new MaxFileSizeValidator({ maxSize: 30000000 }),
-    new FileTypeValidator({ fileType: /^(image|video)\// }),
+    // new FileTypeValidator({ fileType: /^(image|video)\// }),
   ],
 });
 
@@ -44,7 +44,7 @@ export class MediaController {
 
   @Post()
   @ApiBearerAuth(NAME.JWT)
-  // @UseGuards(OAuthGuard)
+  @UseGuards(OAuthGuard)
   @ApiOkResponse({ description: 'Upload image' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
