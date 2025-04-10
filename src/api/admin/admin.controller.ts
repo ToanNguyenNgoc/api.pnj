@@ -43,10 +43,12 @@ export class AdminController {
   }
   //
   @Post('test-stripe')
+  @ApiExcludeEndpoint()
   testStripe() {
     return this.adminService.testStripe();
   }
   @Get('test-stripe/:order_id')
+  @ApiExcludeEndpoint()
   testStripeCheckoutSession(@Param('order_id') order_id: string) {
     return this.adminService.testStripeCheckoutSession();
   }
