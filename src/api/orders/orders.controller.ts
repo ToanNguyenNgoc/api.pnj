@@ -13,7 +13,6 @@ import { OrdersService } from './orders.service';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 import { NAME, SWAGGER_TAG } from 'src/constants';
-import { jsonResponse } from 'src/commons';
 import { OAuthGuard } from 'src/middlewares';
 import { RequestHeaderType } from 'src/types';
 import { User } from '../users/entities/user.entity';
@@ -27,13 +26,11 @@ export class OrdersController {
 
   @Post()
   @UseGuards(OAuthGuard)
-  async create(
+  create(
     @Req() request: RequestHeaderType<User>,
     @Body() createOrderDto: CreateOrderDto,
   ) {
-    return jsonResponse(
-      await this.ordersService.create(request.user, createOrderDto),
-    );
+    return this.ordersService.create(request.user, createOrderDto);
   }
 
   @Get()
