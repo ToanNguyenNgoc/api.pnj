@@ -2,8 +2,8 @@ import { Controller, Get, Injectable, Query, Response } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order, PaymentGateway } from '../orders/entities';
 import { Repository } from 'typeorm';
-import { VNPayService } from 'src/services';
-import { VnPayTransactionType } from 'src/types';
+import { StripeService, VNPayService } from 'src/services';
+import { StripeTransactionType, VnPayTransactionType } from 'src/types';
 import { Response as ResponseExpress } from 'express';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 
@@ -20,6 +20,10 @@ export class PaymentGatewaysController {
     this.orderRepo,
     this.paymentGatewayRepo,
   );
+  private readonly StripeService = new StripeService(
+    this.orderRepo,
+    this.paymentGatewayRepo,
+  );
   @Get('vnpay-notification')
   @ApiExcludeEndpoint()
   VNPayNotification(
@@ -27,5 +31,14 @@ export class PaymentGatewaysController {
     @Response() response: ResponseExpress,
   ) {
     return this.VNPayService.checkoutPaymentGateway(query, response);
+  }
+
+  @Get('stripe-notification')
+  @ApiExcludeEndpoint()
+  StripeNotification(
+    @Query() query: StripeTransactionType,
+    @Response() response: ResponseExpress,
+  ) {
+    return this.StripeService.checkoutSession(query, response);
   }
 }

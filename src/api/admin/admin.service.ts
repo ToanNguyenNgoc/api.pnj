@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateAdminDto } from './dto/update-admin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from '../roles/entities/role.entity';
 import { Repository } from 'typeorm';
@@ -11,6 +10,7 @@ import { permissionsArray } from 'src/commons';
 import { PaymentMethod } from '../payment-methods/entities';
 import { Topic } from '../topics/entities';
 import { Message } from '../messages/entities/message.entity';
+import { PaypalService, StripeService } from 'src/services';
 
 @Injectable()
 export class AdminService {
@@ -28,6 +28,8 @@ export class AdminService {
     private readonly topicRepo: Repository<Topic>,
     @InjectRepository(Message)
     private readonly messageRepo: Repository<Message>,
+    private readonly paypalService: PaypalService,
+    private readonly stripeService: StripeService,
   ) {}
   async instance() {
     const role = await this.roleRepo.findOneBy({ name: User.SUPER_ADMIN });
@@ -61,10 +63,13 @@ export class AdminService {
       await this.userRepo.save(user);
     }
     PaymentMethod.toMethodArray().forEach(async (item) => {
-      await this.paymentMethodRepo.upsert(
-        { name: item.name, method: item.key, bank_code: item.bank_code },
-        ['method'],
-      );
+      const method = await this.paymentMethodRepo.findOne({
+        where: { method: item.method },
+      });
+      if (!method) {
+        const methodData = Object.assign(new PaymentMethod(), item);
+        await this.paymentMethodRepo.save(methodData);
+      }
     });
     return jsonResponse([], 'Instance successfully');
   }
@@ -72,5 +77,22 @@ export class AdminService {
   async clearMessage() {
     await this.messageRepo.delete({});
     await this.topicRepo.delete({});
+  }
+
+  async testPaypal() {
+    const response = await this.paypalService.createOrder();
+    return jsonResponse(response);
+  }
+  async testPaypalCapturePayment(orderId: string) {
+    const response = await this.paypalService.capturePayment(orderId);
+    return jsonResponse(response);
+  }
+  async testStripe() {
+    // const response = await this.stripeService.createSession();
+    return jsonResponse([]);
+  }
+  async testStripeCheckoutSession() {
+    // const response = await this.stripeService.checkoutSession(orderId);
+    return jsonResponse([]);
   }
 }

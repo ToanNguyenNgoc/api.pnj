@@ -12,6 +12,7 @@ import { AdminConsumer } from './admin.consumer';
 import { PaymentMethod } from '../payment-methods/entities';
 import { Topic } from '../topics/entities';
 import { Message } from '../messages/entities/message.entity';
+import { PaypalService, StripeService } from 'src/services';
 
 @Module({
   imports: [
@@ -28,6 +29,12 @@ import { Message } from '../messages/entities/message.entity';
     }),
   ],
   controllers: [AdminController],
-  providers: [AdminService, HashHelper, AdminConsumer],
+  providers: [
+    AdminService,
+    HashHelper,
+    AdminConsumer,
+    PaypalService,
+    StripeService,
+  ],
 })
 export class AdminModule {}

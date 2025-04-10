@@ -66,8 +66,10 @@ export class VNPayService {
       await this.paymentGatewayRepo.create({
         amount,
         transaction_id: orderId,
+        payment_gateway_code: orderId,
         payment_url: vnpUrl,
         callback_url: this.getCallbackUrl(orderId),
+        extra_data: JSON.stringify(vnp_Params),
       }),
     );
   }

@@ -1,6 +1,6 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 import { NAME, SWAGGER_TAG } from 'src/constants';
 import { OAuthGuard, RoleGuard } from 'src/middlewares';
 import { Roles } from 'src/decorators';
@@ -8,8 +8,8 @@ import { jsonResponse } from 'src/commons';
 
 @ApiTags(SWAGGER_TAG.Admin)
 @Controller('admin')
-@UseGuards(OAuthGuard)
-@ApiBearerAuth(NAME.JWT)
+// @UseGuards(OAuthGuard)
+// @ApiBearerAuth(NAME.JWT)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
@@ -30,24 +30,24 @@ export class AdminController {
     this.adminService.clearMessage();
     return jsonResponse([]);
   }
-
-  // @Get()
-  // findAll() {
-  //   return this.adminService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.adminService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
-  //   return this.adminService.update(+id, updateAdminDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.adminService.remove(+id);
-  // }
+  //
+  @Post('test-paypal')
+  @ApiExcludeEndpoint()
+  testPaypal() {
+    return this.adminService.testPaypal();
+  }
+  @Get('test-paypal/:order_id')
+  @ApiExcludeEndpoint()
+  testPaypalCapturePayment(@Param('order_id') order_id: string) {
+    return this.adminService.testPaypalCapturePayment(order_id);
+  }
+  //
+  @Post('test-stripe')
+  testStripe() {
+    return this.adminService.testStripe();
+  }
+  @Get('test-stripe/:order_id')
+  testStripeCheckoutSession(@Param('order_id') order_id: string) {
+    return this.adminService.testStripeCheckoutSession();
+  }
 }

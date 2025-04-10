@@ -20,4 +20,10 @@ export class PaymentGateway extends BaseEntity {
 
   @Column({ nullable: true })
   callback_url: string;
+
+  @Column({ nullable: true })
+  payment_gateway_code: string;
+
+  @Column({ nullable: true, length: 10000 })
+  extra_data: string;
 }

@@ -8,3 +8,5 @@ export * from './get-media/get-media.service';
 
 export * from './vnpay/vnpay.service';
 export * from './cache/cache.service';
+export * from './paypal/paypal.service';
+export * from './stripe/stripe.service';

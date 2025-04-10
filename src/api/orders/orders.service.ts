@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { BaseService, VNPayService } from 'src/services';
+import { BaseService, StripeService, VNPayService } from 'src/services';
 import { Order, OrderItem, PaymentGateway } from './entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -66,6 +66,13 @@ export class OrdersService extends BaseService<Order> {
         this.paymentGatewayRepo,
       );
       paymentGateway = await vnPayService.createPaymentGateway(amount);
+    }
+    if (paymentMethod.method === PaymentMethod.METHOD.STRIPE.key) {
+      const stripeService = new StripeService(
+        this.orderRepo,
+        this.paymentGatewayRepo,
+      );
+      paymentGateway = await stripeService.createSession(amount);
     }
     return paymentGateway;
   }
