@@ -44,10 +44,11 @@ export class BrandsService extends BaseService<Brand> {
     );
   }
 
-  async update(id: number, { name, media_id }: UpdateBrandDto) {
+  async update(id: number, { name, media_id, active }: UpdateBrandDto) {
     return this.findAndUpdate(id, {
       name,
       media: await this.getMediaService.getOne(media_id),
+      active,
     });
   }
 
