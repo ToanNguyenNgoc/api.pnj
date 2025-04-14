@@ -25,6 +25,7 @@ import { BlogCategoriesModule } from './blog-categories/blog-categories.module';
 import { BrandsModule } from './brands/brands.module';
 import { TopicsModule } from './topics/topics.module';
 import { MessagesModule } from './messages/messages.module';
+import { AppsModule } from './apps/apps.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { MessagesModule } from './messages/messages.module';
     TopicsModule,
     MessagesModule,
     AdminModule,
+    AppsModule,
   ],
   providers: [AuthStrategy],
 })
