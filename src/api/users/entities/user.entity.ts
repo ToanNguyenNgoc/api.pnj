@@ -17,6 +17,7 @@ import { Media } from 'src/api/media/entities';
 import { UserAddress } from 'src/api/user-addresses/entities';
 import { Order } from 'src/api/orders/entities';
 import { Message } from 'src/api/messages/entities/message.entity';
+import { Notification } from 'src/api/notifications/entities/notification.entity';
 
 @Entity({ name: 'tb_user' })
 export class User {
@@ -97,4 +98,10 @@ export class User {
 
   @OneToMany(() => Message, (message) => message.user)
   messages: Message[];
+
+  @OneToMany(() => Notification, (noti) => noti.user)
+  send_notifications: Notification[];
+
+  @OneToMany(() => Notification, (noti) => noti.recipient)
+  recipient_notifications: Notification[];
 }

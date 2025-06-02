@@ -4,7 +4,6 @@ import { Permission } from 'src/api/permissions/entities/permission.entity';
 import { Role } from 'src/api/roles/entities/role.entity';
 import { User } from 'src/api/users/entities/user.entity';
 import { OAthService } from './oauth.service';
-import { Refresh } from 'src/api/auth/entities';
 
 @Global()
 @Module({

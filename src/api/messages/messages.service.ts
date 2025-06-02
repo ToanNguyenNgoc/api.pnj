@@ -12,6 +12,9 @@ import { QrMessage } from './dto/query-message.dto';
 import { Media } from '../media/entities';
 import { base64encode } from 'src/utils';
 import { jsonResponse } from 'src/commons';
+import { MessageGateway } from 'src/gateway/message/message.gateway';
+import { NotificationsService } from '../notifications/notifications.service';
+import { Notification } from '../notifications/entities/notification.entity';
 
 @Injectable()
 export class MessagesService extends BaseService<Message> {
@@ -23,6 +26,8 @@ export class MessagesService extends BaseService<Message> {
     private readonly topicService: TopicsService,
     private readonly mediaService: GetMediaService,
     private readonly cacheService: CacheService,
+    private readonly notiService: NotificationsService,
+    private readonly messageGateway: MessageGateway,
   ) {
     super(msgRepo);
   }
@@ -32,12 +37,27 @@ export class MessagesService extends BaseService<Message> {
       body.topic_id,
     );
     await this.topicRepo.save({ ...topic, msg: body.msg || Media.TYPE.MEDIA });
-    return this.createData(Message, {
+    const messageCtx = await this.createData(Message, {
       msg: body.msg,
       topic,
       user: userAuth,
       medias: await this.mediaService.getMultiple(body.media_ids),
     });
+    const topicDetail = await this.topicService.onTopic(topic.id);
+    topicDetail.users
+      .concat(topicDetail.owners)
+      .filter(Boolean)
+      .forEach((user) => {
+        this.notiService.create({
+          sender_id: userAuth.id,
+          content: body.msg || 'Đã gửi file',
+          payload_id: messageCtx.context.id,
+          type: Notification.TYPE_MESSAGE,
+          recipient_id: user.id,
+        });
+      });
+    this.messageGateway.sendMessageToTopic(messageCtx.context);
+    return messageCtx;
   }
 
   async findAll(user: User, qr: QrMessage) {

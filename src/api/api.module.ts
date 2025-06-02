@@ -26,10 +26,12 @@ import { BrandsModule } from './brands/brands.module';
 import { TopicsModule } from './topics/topics.module';
 import { MessagesModule } from './messages/messages.module';
 import { AppsModule } from './apps/apps.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { Notification } from './notifications/entities/notification.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Media]),
+    TypeOrmModule.forFeature([User, Media, Notification]),
     OAuthModule,
     GetMediaModule,
     AuthModule,
@@ -54,6 +56,7 @@ import { AppsModule } from './apps/apps.module';
     MessagesModule,
     AdminModule,
     AppsModule,
+    NotificationsModule,
   ],
   providers: [AuthStrategy],
 })

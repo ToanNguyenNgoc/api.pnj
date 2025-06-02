@@ -7,6 +7,7 @@ import { MoreThan, Repository } from 'typeorm';
 import { BaseService, GetMediaService } from 'src/services';
 import { Product } from '../product/entities';
 import { QrBanner } from './dto';
+import { BaseGateway } from 'src/gateway/base/base.gateway';
 
 @Injectable()
 export class BannersService extends BaseService<Banner> {
@@ -16,6 +17,7 @@ export class BannersService extends BaseService<Banner> {
     @InjectRepository(Product)
     private readonly productRepo: Repository<Product>,
     private readonly mediaService: GetMediaService,
+    private readonly baseGateway: BaseGateway,
   ) {
     super(bannerRepo);
   }

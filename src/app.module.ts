@@ -7,9 +7,10 @@ import { typeOrmAsyncConfig } from 'database/data-source';
 import { ApiModule } from './api/api.module';
 import { JwtConfigModule } from './commons';
 import { BullModule } from '@nestjs/bull';
-import { ChatModule } from './gateway';
 import { CacheModule } from '@nestjs/cache-manager';
 import { bullConfig, cacheConfig } from './configs';
+import { MessageModule } from './gateway/message/message.module';
+import { BaseModule } from './gateway/base/base.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { bullConfig, cacheConfig } from './configs';
     CacheModule.registerAsync(cacheConfig),
     ApiModule,
     JwtConfigModule,
-    ChatModule,
+    BaseModule,
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

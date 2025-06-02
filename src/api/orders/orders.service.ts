@@ -14,6 +14,8 @@ import {
   UpdateOrderItemDto,
 } from './dto';
 import { PaymentMethod } from '../payment-methods/entities';
+import { NotificationsService } from '../notifications/notifications.service';
+import { Notification } from '../notifications/entities/notification.entity';
 
 @Injectable()
 export class OrdersService extends BaseService<Order> {
@@ -25,6 +27,7 @@ export class OrdersService extends BaseService<Order> {
     @InjectRepository(PaymentGateway)
     private readonly paymentGatewayRepo: Repository<PaymentGateway>,
     private readonly calculateOrderHelper: CalculateOrderHelper,
+    private readonly notiService: NotificationsService,
   ) {
     super(orderRepo);
   }
@@ -56,7 +59,14 @@ export class OrdersService extends BaseService<Order> {
       },
     );
     await this.orderItemRepo.save(orderItems);
-    return this.findOne(order.id);
+    const orderContext = await this.findOne(order.id);
+    this.notiService.create({
+      sender_id: user.id,
+      content: 'Tạo mới đơn hàng',
+      type: Notification.TYPE_ORDER,
+      payload_id: order.id,
+    });
+    return orderContext;
   }
   async onPaymentGateway(paymentMethod: PaymentMethod, amount: number) {
     let paymentGateway: PaymentGateway;
